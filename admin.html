@@ -490,6 +490,10 @@ async function openCampaignManager() {
   // 關閉中獎紀錄區
 document.getElementById('drawResultsManager')
   .classList.add('hidden');
+  
+  // 關閉獎品管理區
+document.getElementById('prizeManager')
+  .classList.add('hidden');
 
   campaignBox.classList.toggle('hidden');
 
@@ -985,6 +989,10 @@ document.getElementById('redemptionManager')
 document.getElementById('drawResultsManager')
   .classList.add('hidden');
   
+  // 關閉獎品管理區
+document.getElementById('prizeManager')
+  .classList.add('hidden');
+  
   memberBox.classList.toggle('hidden');
 
   if (!memberBox.classList.contains('hidden')) {
@@ -1260,6 +1268,9 @@ async function openRedemptionManager() {
 
   document.getElementById('memberDrawManager')
     .classList.add('hidden');
+    
+    document.getElementById('prizeManager')
+  .classList.add('hidden');
 
   box.classList.toggle('hidden');
 
@@ -1481,6 +1492,9 @@ async function openDrawResultsManager() {
 
   document.getElementById('redemptionManager')
     .classList.add('hidden');
+    
+    document.getElementById('prizeManager')
+  .classList.add('hidden');
 
   const box =
     document.getElementById('drawResultsManager');
