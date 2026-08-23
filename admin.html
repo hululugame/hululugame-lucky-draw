@@ -471,41 +471,13 @@ showAdmin(data.user);
           '目前登入：' + (user?.email || '管理員');
 
     }
-
-async function openCampaignManager() {
-
-  const campaignBox =
-    document.getElementById('campaignManager');
-
-  const memberBox =
-    document.getElementById('memberDrawManager');
-
-  // 關閉會員加抽區
-  memberBox.classList.add('hidden');
-  
-    // 關閉兌換碼管理區
-  document.getElementById('redemptionManager')
-  .classList.add('hidden');
-  
-  // 關閉中獎紀錄區
-document.getElementById('drawResultsManager')
-  .classList.add('hidden');
-  
-  // 關閉獎品管理區
-document.getElementById('prizeManager')
-  .classList.add('hidden');
-
-  campaignBox.classList.toggle('hidden');
-
-  if (!campaignBox.classList.contains('hidden')) {
-    await loadCampaigns();
-  }
-
-}
-
-async function openPrizeManager() {
+    
+    function closeAllManagers() {
 
   document.getElementById('campaignManager')
+    .classList.add('hidden');
+
+  document.getElementById('prizeManager')
     .classList.add('hidden');
 
   document.getElementById('memberDrawManager')
@@ -517,14 +489,41 @@ async function openPrizeManager() {
   document.getElementById('drawResultsManager')
     .classList.add('hidden');
 
+}
+
+async function openCampaignManager() {
+
+const campaignBox =
+  document.getElementById('campaignManager');
+
+const wasHidden =
+  campaignBox.classList.contains('hidden');
+
+closeAllManagers();
+
+if (wasHidden) {
+  campaignBox.classList.remove('hidden');
+  await loadCampaigns();
+}
+
+}
+
+async function openPrizeManager() {
+
   const prizeBox =
     document.getElementById('prizeManager');
 
-  prizeBox.classList.toggle('hidden');
+  const wasHidden =
+    prizeBox.classList.contains('hidden');
 
-  if (!prizeBox.classList.contains('hidden')) {
+  closeAllManagers();
+
+  if (wasHidden) {
+    prizeBox.classList.remove('hidden');
     await loadPrizeCampaigns();
   }
+
+}
 
 }
 
@@ -975,27 +974,13 @@ async function openMemberDrawManager() {
   const memberBox =
     document.getElementById('memberDrawManager');
 
-  const campaignBox =
-    document.getElementById('campaignManager');
+  const wasHidden =
+    memberBox.classList.contains('hidden');
 
-  // 關閉活動管理區
-  campaignBox.classList.add('hidden');
+  closeAllManagers();
 
-// 關閉兌換碼管理區
-document.getElementById('redemptionManager')
-  .classList.add('hidden');
-  
-  // 關閉中獎紀錄區
-document.getElementById('drawResultsManager')
-  .classList.add('hidden');
-  
-  // 關閉獎品管理區
-document.getElementById('prizeManager')
-  .classList.add('hidden');
-  
-  memberBox.classList.toggle('hidden');
-
-  if (!memberBox.classList.contains('hidden')) {
+  if (wasHidden) {
+    memberBox.classList.remove('hidden');
     await loadMembers();
   }
 
@@ -1260,21 +1245,16 @@ function filterMembers() {
 
 async function openRedemptionManager() {
 
-  const box =
+  const redemptionBox =
     document.getElementById('redemptionManager');
 
-  document.getElementById('campaignManager')
-    .classList.add('hidden');
+  const wasHidden =
+    redemptionBox.classList.contains('hidden');
 
-  document.getElementById('memberDrawManager')
-    .classList.add('hidden');
-    
-    document.getElementById('prizeManager')
-  .classList.add('hidden');
+  closeAllManagers();
 
-  box.classList.toggle('hidden');
-
-  if (!box.classList.contains('hidden')) {
+  if (wasHidden) {
+    redemptionBox.classList.remove('hidden');
     await loadRedemptionCodes();
   }
 
@@ -1484,29 +1464,20 @@ async function createRedemptionCode() {
 
 async function openDrawResultsManager() {
 
-  document.getElementById('campaignManager')
-    .classList.add('hidden');
-
-  document.getElementById('memberDrawManager')
-    .classList.add('hidden');
-
-  document.getElementById('redemptionManager')
-    .classList.add('hidden');
-    
-    document.getElementById('prizeManager')
-  .classList.add('hidden');
-
-  const box =
+  const resultsBox =
     document.getElementById('drawResultsManager');
 
-  box.classList.toggle('hidden');
+  const wasHidden =
+    resultsBox.classList.contains('hidden');
 
-  if (!box.classList.contains('hidden')) {
+  closeAllManagers();
+
+  if (wasHidden) {
+    resultsBox.classList.remove('hidden');
     await loadDrawResults();
   }
 
 }
-
 
 async function loadDrawResults() {
 
