@@ -159,9 +159,9 @@
   ➕ 幫客人增加抽數
 </button>
 
-      <button class="menu-button" onclick="comingSoon()">
-        🏆 查看中獎紀錄
-      </button>
+      <button class="menu-button" onclick="openDrawResultsManager()">
+  🏆 查看中獎紀錄
+</button>
 
       <button class="menu-button" onclick="comingSoon()">
         ✅ 標記已領獎
@@ -287,6 +287,25 @@
 
 </div>
 
+<div id="drawResultsManager" class="hidden" style="margin-top:20px;">
+
+  <hr style="border:none;border-top:1px solid #ddd;margin:20px 0;">
+
+  <h2>🏆 中獎紀錄</h2>
+
+  <input
+    id="drawResultSearch"
+    class="input"
+    placeholder="搜尋暱稱、Email、獎品"
+    oninput="filterDrawResults()"
+  >
+
+  <div id="drawResultList">
+    載入中...
+  </div>
+
+</div>
+
     </section>
 
   </main>
@@ -407,6 +426,10 @@ async function openCampaignManager() {
   
     // 關閉兌換碼管理區
   document.getElementById('redemptionManager')
+  .classList.add('hidden');
+  
+  // 關閉中獎紀錄區
+document.getElementById('drawResultsManager')
   .classList.add('hidden');
 
   campaignBox.classList.toggle('hidden');
@@ -604,6 +627,10 @@ async function openMemberDrawManager() {
 
 // 關閉兌換碼管理區
 document.getElementById('redemptionManager')
+  .classList.add('hidden');
+  
+  // 關閉中獎紀錄區
+document.getElementById('drawResultsManager')
   .classList.add('hidden');
   
   memberBox.classList.toggle('hidden');
@@ -1089,6 +1116,241 @@ async function createRedemptionCode() {
       alert('這個功能下一步開始做');
 
     }
+    let allDrawResults = [];
+
+
+async function openDrawResultsManager() {
+
+  document.getElementById('campaignManager')
+    .classList.add('hidden');
+
+  document.getElementById('memberDrawManager')
+    .classList.add('hidden');
+
+  document.getElementById('redemptionManager')
+    .classList.add('hidden');
+
+  const box =
+    document.getElementById('drawResultsManager');
+
+  box.classList.toggle('hidden');
+
+  if (!box.classList.contains('hidden')) {
+    await loadDrawResults();
+  }
+
+}
+
+
+async function loadDrawResults() {
+
+  const list =
+    document.getElementById('drawResultList');
+
+  list.innerHTML =
+    '載入中...';
+
+
+  const { data, error } =
+    await db.rpc('admin_get_draw_results');
+
+
+  if (error) {
+
+    console.error(error);
+
+    list.innerHTML =
+      '讀取失敗：' + error.message;
+
+    return;
+
+  }
+
+
+  allDrawResults =
+    data || [];
+
+
+  renderDrawResults(allDrawResults);
+
+}
+
+
+function filterDrawResults() {
+
+  const keyword =
+    document.getElementById('drawResultSearch')
+      .value.trim()
+      .toLowerCase();
+
+
+  if (!keyword) {
+
+    renderDrawResults(allDrawResults);
+
+    return;
+
+  }
+
+
+  const filtered =
+    allDrawResults.filter(item => {
+
+      const name =
+        (item.member_name || '')
+          .toLowerCase();
+
+      const email =
+        (item.member_email || '')
+          .toLowerCase();
+
+      const prize =
+        (item.prize_name || '')
+          .toLowerCase();
+
+      return (
+        name.includes(keyword) ||
+        email.includes(keyword) ||
+        prize.includes(keyword)
+      );
+
+    });
+
+
+  renderDrawResults(filtered);
+
+}
+
+
+function renderDrawResults(items) {
+
+  const list =
+    document.getElementById('drawResultList');
+
+
+  if (!items || items.length === 0) {
+
+    list.innerHTML =
+      '<div class="small">找不到中獎紀錄</div>';
+
+    return;
+
+  }
+
+
+  list.innerHTML = '';
+
+
+  items.forEach(item => {
+
+    const box =
+      document.createElement('div');
+
+    box.style.background = '#f3f3f3';
+    box.style.borderRadius = '12px';
+    box.style.padding = '14px';
+    box.style.marginBottom = '12px';
+
+
+    const time =
+      item.drawn_at
+        ? new Date(item.drawn_at).toLocaleString()
+        : '';
+
+
+    const redeemedTime =
+      item.redeemed_at
+        ? new Date(item.redeemed_at).toLocaleString()
+        : '';
+
+
+    const statusHtml =
+      item.redeemed
+        ? `
+          <div style="margin-top:10px;font-weight:bold;">
+            ✅ 已領取
+          </div>
+
+          <div class="small">
+            領取時間：${escapeHtmlAdmin(redeemedTime)}
+          </div>
+        `
+        : `
+          <div style="margin-top:10px;font-weight:bold;color:#e63946;">
+            ⏳ 待領取
+          </div>
+
+          <button
+            class="button"
+            style="margin-top:10px;"
+            onclick="markRedeemed('${item.result_id}')"
+          >
+            ✅ 標記已領取
+          </button>
+        `;
+
+
+    box.innerHTML = `
+
+      <div style="font-weight:bold;font-size:18px;">
+        🎁 ${escapeHtmlAdmin(item.prize_name)}
+      </div>
+
+      <div class="small" style="margin-top:7px;line-height:1.8;">
+        👤 ${escapeHtmlAdmin(item.member_name || '未設定暱稱')}<br>
+        📧 ${escapeHtmlAdmin(item.member_email || '無會員 Email')}<br>
+        🎪 ${escapeHtmlAdmin(item.campaign_title)}<br>
+        🧧 第 ${item.slot_number} 格<br>
+        🕐 ${escapeHtmlAdmin(time)}
+      </div>
+
+      ${statusHtml}
+
+    `;
+
+
+    list.appendChild(box);
+
+  });
+
+}
+
+
+async function markRedeemed(resultId) {
+
+  const ok =
+    confirm('確定已經把這個獎品交給客人了嗎？');
+
+  if (!ok) return;
+
+
+  const { error } =
+    await db.rpc(
+      'admin_mark_redeemed',
+      {
+        p_result_id: resultId
+      }
+    );
+
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      '標記失敗：' + error.message
+    );
+
+    return;
+
+  }
+
+
+  alert('✅ 已標記為領取');
+
+  await loadDrawResults();
+
+}
 
 
     async function checkSession() {
