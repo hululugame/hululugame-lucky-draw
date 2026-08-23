@@ -293,9 +293,17 @@
 
 
   const db = supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth: {
+      storageKey: 'hululugame-member-auth',
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    }
+  }
+);
 
 
   let currentAccessCode = '';
