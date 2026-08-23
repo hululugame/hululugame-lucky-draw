@@ -1,1 +1,284 @@
-1
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>hululugame 管理後台</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
+      background: #f6f6f6;
+      color: #222;
+    }
+
+    .header {
+      background: #222;
+      color: white;
+      padding: 18px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 22px;
+    }
+
+    .container {
+      max-width: 520px;
+      margin: auto;
+      padding: 18px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 16px rgba(0,0,0,.08);
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    .input {
+      width: 100%;
+      height: 48px;
+      border: 2px solid #ddd;
+      border-radius: 12px;
+      padding: 0 14px;
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+
+    .button {
+      width: 100%;
+      height: 48px;
+      border: none;
+      border-radius: 12px;
+      background: #e63946;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 4px;
+    }
+
+    .button.secondary {
+      background: #444;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .status {
+      text-align: center;
+      margin-top: 12px;
+      font-weight: bold;
+    }
+
+    .menu-button {
+      width: 100%;
+      text-align: left;
+      padding: 16px;
+      border: none;
+      background: #f3f3f3;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .small {
+      color: #777;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    🔐 hululugame 管理後台
+  </div>
+
+  <main class="container">
+
+    <section id="loginCard" class="card">
+      <h2>管理員登入</h2>
+
+      <input
+        id="email"
+        class="input"
+        type="email"
+        placeholder="管理員 Email"
+      >
+
+      <input
+        id="password"
+        class="input"
+        type="password"
+        placeholder="密碼"
+      >
+
+      <button class="button" onclick="login()">
+        登入後台
+      </button>
+
+      <div id="loginStatus" class="status"></div>
+
+      <p class="small">
+        此頁僅供管理員使用。
+      </p>
+    </section>
+
+
+    <section id="adminPanel" class="card hidden">
+
+      <h2>管理功能</h2>
+
+      <div id="adminEmail" class="small" style="margin-bottom:16px;"></div>
+
+      <button class="menu-button" onclick="comingSoon()">
+        🎪 管理每期抽抽樂
+      </button>
+
+      <button class="menu-button" onclick="comingSoon()">
+        🎁 管理獎品
+      </button>
+
+      <button class="menu-button" onclick="comingSoon()">
+        🎟️ 建立客人抽獎碼
+      </button>
+
+      <button class="menu-button" onclick="comingSoon()">
+        ➕ 幫客人增加抽數
+      </button>
+
+      <button class="menu-button" onclick="comingSoon()">
+        🏆 查看中獎紀錄
+      </button>
+
+      <button class="menu-button" onclick="comingSoon()">
+        ✅ 標記已領獎
+      </button>
+
+      <button class="button secondary" onclick="logout()">
+        登出
+      </button>
+
+    </section>
+
+  </main>
+
+
+  <script>
+
+    const SUPABASE_URL =
+      'https://rhssnydqgdlkaxwrwwlp.supabase.co';
+
+    const SUPABASE_KEY =
+      'sb_publishable_KN1SvNhpJtxfTg-Lz_D16w_6L41j_wW';
+
+    const db = supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+
+    async function login() {
+
+      const email =
+        document.getElementById('email').value.trim();
+
+      const password =
+        document.getElementById('password').value;
+
+      const status =
+        document.getElementById('loginStatus');
+
+      if (!email || !password) {
+        status.innerText = '請輸入 Email 和密碼';
+        return;
+      }
+
+      status.innerText = '登入中...';
+
+      const { data, error } =
+        await db.auth.signInWithPassword({
+          email,
+          password
+        });
+
+      if (error) {
+        console.error(error);
+        status.innerText = '登入失敗，請確認帳號密碼';
+        return;
+      }
+
+      status.innerText = '';
+
+      showAdmin(data.user);
+
+    }
+
+
+    async function logout() {
+
+      await db.auth.signOut();
+
+      document.getElementById('adminPanel')
+        .classList.add('hidden');
+
+      document.getElementById('loginCard')
+        .classList.remove('hidden');
+
+      document.getElementById('password').value = '';
+
+    }
+
+
+    function showAdmin(user) {
+
+      document.getElementById('loginCard')
+        .classList.add('hidden');
+
+      document.getElementById('adminPanel')
+        .classList.remove('hidden');
+
+      document.getElementById('adminEmail')
+        .innerText =
+          '目前登入：' + (user?.email || '管理員');
+
+    }
+
+
+    function comingSoon() {
+
+      alert('這個功能下一步開始做');
+
+    }
+
+
+    async function checkSession() {
+
+      const { data } =
+        await db.auth.getSession();
+
+      if (data.session) {
+        showAdmin(data.session.user);
+      }
+
+    }
+
+
+    checkSession();
+
+  </script>
+
+</body>
+</html>
