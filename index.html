@@ -563,96 +563,104 @@ function goMemberCenter() {
 
   async function drawSlot(slotNumber) {
 
-    if (!currentAccessCode) {
+  if (!currentUser) {
 
-      alert('請先輸入抽獎碼並查詢抽獎次數');
+    alert('請先登入會員');
 
-      return;
+    goMemberLogin();
 
-    }
+    return;
 
-    if (remainingDraws <= 0) {
-
-      alert('你的抽獎次數已用完');
-
-      return;
-
-    }
-
-    const ok =
-      confirm(
-        `確定要抽第 ${slotNumber} 格嗎？`
-      );
-
-    if (!ok) return;
+  }
 
 
-    const { data, error } =
-      await db.rpc(
-        'draw_slot',
-        {
-          p_access_code:
-            currentAccessCode,
+  if (remainingDraws <= 0) {
 
-          p_slot_number:
-            slotNumber
-        }
-      );
+    alert('你的抽獎次數已用完');
+
+    return;
+
+  }
 
 
-    if (error) {
+  const ok =
+    confirm(
+      `確定要抽第 ${slotNumber} 格嗎？`
+    );
 
-      console.error(error);
-
-      alert(
-        error.message ||
-        '抽獎失敗，請重新整理後再試'
-      );
-
-      await refreshAll();
-
-      return;
-    }
+  if (!ok) return;
 
 
-    if (!data || data.length === 0)
-      return;
+  const { data, error } =
+    await db.rpc(
+      'draw_slot_member',
+      {
+        p_slot_number:
+          slotNumber
+      }
+    );
 
 
-    const result = data[0];
+  if (error) {
 
-    remainingDraws =
-      result.remaining_draws;
+    console.error(error);
 
-
-    document.getElementById(
-      'resultPrize'
-    ).innerText =
-      '🎁 ' + result.prize_name;
-
-
-    document.getElementById(
-      'resultRemaining'
-    ).innerText =
-      `剩餘抽獎次數：${remainingDraws} 次`;
-
-
-    document.getElementById(
-      'resultOverlay'
-    ).style.display = 'flex';
-
-
-    document.getElementById(
-      'drawInfo'
-    ).innerHTML =
-      `🎟️ 目前剩餘
-       <strong>${remainingDraws} 次</strong>
-       抽獎機會`;
-
+    alert(
+      error.message ||
+      '抽獎失敗，請重新整理後再試'
+    );
 
     await refreshAll();
 
+    await loadMemberDrawStatus();
+
+    return;
+
   }
+
+
+  if (!data || data.length === 0) {
+    return;
+  }
+
+
+  const result =
+    data[0];
+
+
+  remainingDraws =
+    result.remaining_draws;
+
+
+  document.getElementById(
+    'resultPrize'
+  ).innerText =
+    '🎁 ' + result.prize_name;
+
+
+  document.getElementById(
+    'resultRemaining'
+  ).innerText =
+    `剩餘抽獎次數：${remainingDraws} 次`;
+
+
+  document.getElementById(
+    'resultOverlay'
+  ).style.display =
+    'flex';
+
+
+  document.getElementById(
+    'drawInfo'
+  ).innerHTML =
+    `🎟️ 目前剩餘
+     <strong>${remainingDraws} 次</strong>
+     抽獎機會`;
+
+
+  await refreshAll();
+
+}
 
 
   function closeResult() {
@@ -689,7 +697,8 @@ function goMemberCenter() {
 
 
   refreshAll();
-
+  
+checkMemberSession();
 
   // 每 15 秒更新一次
   // 這樣其他客人抽過的格子會自動刷新
