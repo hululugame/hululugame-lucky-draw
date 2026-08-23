@@ -155,9 +155,9 @@
         🎟️ 建立客人抽獎碼
       </button>
 
-      <button class="menu-button" onclick="comingSoon()">
-        ➕ 幫客人增加抽數
-      </button>
+      <button class="menu-button" onclick="openMemberDrawManager()">
+  ➕ 幫客人增加抽數
+</button>
 
       <button class="menu-button" onclick="comingSoon()">
         🏆 查看中獎紀錄
@@ -211,6 +211,19 @@
   </div>
 
 </div>
+
+<div id="memberDrawManager" class="hidden" style="margin-top:20px;">
+
+  <hr style="border:none;border-top:1px solid #ddd;margin:20px 0;">
+
+  <h2>➕ 幫會員增加抽數</h2>
+
+  <div id="memberList">
+    載入會員中...
+  </div>
+
+</div>
+
     </section>
 
   </main>
@@ -483,6 +496,225 @@ function escapeHtmlAdmin(text) {
   return div.innerHTML;
 
 }
+async function openMemberDrawManager() {
+
+  const box =
+    document.getElementById('memberDrawManager');
+
+  box.classList.toggle('hidden');
+
+  if (!box.classList.contains('hidden')) {
+    await loadMembers();
+  }
+
+}
+
+
+async function loadMembers() {
+
+  const list =
+    document.getElementById('memberList');
+
+  list.innerHTML =
+    '載入會員中...';
+
+
+  const { data, error } =
+    await db.rpc('admin_get_members');
+
+
+  if (error) {
+
+    console.error(error);
+
+    list.innerHTML =
+      '讀取會員失敗：' + error.message;
+
+    return;
+
+  }
+
+
+  if (!data || data.length === 0) {
+
+    list.innerHTML =
+      '<div class="small">目前沒有會員</div>';
+
+    return;
+
+  }
+
+
+  list.innerHTML = '';
+
+
+  data.forEach(member => {
+
+    const box =
+      document.createElement('div');
+
+    box.style.background = '#f3f3f3';
+    box.style.borderRadius = '12px';
+    box.style.padding = '14px';
+    box.style.marginBottom = '12px';
+
+
+    const name =
+      member.display_name ||
+      '未設定暱稱';
+
+
+    box.innerHTML = `
+
+      <div style="font-weight:bold;font-size:17px;">
+        👤 ${escapeHtmlAdmin(name)}
+      </div>
+
+      <div class="small" style="margin:6px 0 12px;">
+        ${escapeHtmlAdmin(member.email)}
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+
+        <button
+          class="button"
+          style="width:auto;padding:0 16px;"
+          onclick="addMemberDraws('${member.user_id}', 1)"
+        >
+          +1 抽
+        </button>
+
+        <button
+          class="button"
+          style="width:auto;padding:0 16px;"
+          onclick="addMemberDraws('${member.user_id}', 3)"
+        >
+          +3 抽
+        </button>
+
+        <button
+          class="button"
+          style="width:auto;padding:0 16px;"
+          onclick="addMemberDraws('${member.user_id}', 5)"
+        >
+          +5 抽
+        </button>
+
+      </div>
+
+      <div style="margin-top:10px;display:flex;gap:8px;">
+
+        <input
+          id="custom-${member.user_id}"
+          class="input"
+          type="number"
+          inputmode="numeric"
+          placeholder="自訂抽數"
+          style="margin-bottom:0;"
+        >
+
+        <button
+          class="button secondary"
+          style="width:auto;padding:0 16px;"
+          onclick="addCustomMemberDraws('${member.user_id}')"
+        >
+          加入
+        </button>
+
+      </div>
+
+      <div
+        id="member-status-${member.user_id}"
+        class="small"
+        style="margin-top:8px;"
+      ></div>
+
+    `;
+
+
+    list.appendChild(box);
+
+  });
+
+}
+
+
+async function addMemberDraws(
+  userId,
+  draws
+) {
+
+  const status =
+    document.getElementById(
+      'member-status-' + userId
+    );
+
+
+  status.innerText =
+    '處理中...';
+
+
+  const { error } =
+    await db.rpc(
+      'admin_add_member_draws',
+      {
+        p_user_id: userId,
+        p_draws: draws
+      }
+    );
+
+
+  if (error) {
+
+    console.error(error);
+
+    status.innerText =
+      '增加失敗：' + error.message;
+
+    return;
+
+  }
+
+
+  status.innerText =
+    `✅ 已增加 ${draws} 抽`;
+
+}
+
+
+async function addCustomMemberDraws(
+  userId
+) {
+
+  const input =
+    document.getElementById(
+      'custom-' + userId
+    );
+
+
+  const draws =
+    Number(input.value);
+
+
+  if (!Number.isInteger(draws) || draws <= 0) {
+
+    alert('請輸入大於 0 的整數');
+
+    return;
+
+  }
+
+
+  await addMemberDraws(
+    userId,
+    draws
+  );
+
+
+  input.value = '';
+
+}
+
     function comingSoon() {
 
       alert('這個功能下一步開始做');
