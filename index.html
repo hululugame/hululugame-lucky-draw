@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>hululugame 抽抽樂</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                   "Noto Sans TC", sans-serif;
+      background: #fff8e7;
+      color: #292929;
+    }
+
+    .header {
+      background: #e63946;
+      color: white;
+      text-align: center;
+      padding: 24px 16px;
+      border-bottom: 6px solid #ffc300;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .header p {
+      margin: 8px 0 0;
+      opacity: 0.95;
+    }
+
+    .container {
+      max-width: 650px;
+      margin: auto;
+      padding: 16px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .campaign-title {
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .remaining {
+      text-align: center;
+      font-size: 18px;
+      color: #e63946;
+      font-weight: bold;
+    }
+
+    .prizes h2 {
+      margin-top: 0;
+      font-size: 20px;
+    }
+
+    .prize-row {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px dashed #ddd;
+      padding: 10px 0;
+    }
+
+    .login-title {
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .input {
+      width: 100%;
+      height: 48px;
+      border: 2px solid #ddd;
+      border-radius: 12px;
+      padding: 0 14px;
+      font-size: 17px;
+      margin-bottom: 10px;
+    }
+
+    .button {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      height: 48px;
+      background: #e63946;
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+    }
+
+    .draw-info {
+      text-align: center;
+      margin-top: 12px;
+      font-weight: bold;
+    }
+
+    .board-title {
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 14px;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .slot {
+      aspect-ratio: 1 / 1;
+      border: 3px solid #ffc300;
+      background: #e63946;
+      color: white;
+      border-radius: 13px;
+      font-size: 18px;
+      font-weight: bold;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #a51d28;
+    }
+
+    .slot span {
+      font-size: 25px;
+    }
+
+    .slot.drawn {
+      background: #ddd;
+      color: #777;
+      border-color: #bbb;
+      box-shadow: none;
+    }
+
+    .notice {
+      text-align: center;
+      font-size: 14px;
+      color: #777;
+      line-height: 1.6;
+    }
+
+    .result-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      align-items: center;
+      justify-content: center;
+      padding: 25px;
+      z-index: 1000;
+    }
+
+    .result-box {
+      width: 100%;
+      max-width: 400px;
+      background: white;
+      border-radius: 22px;
+      padding: 28px 20px;
+      text-align: center;
+    }
+
+    .result-box h2 {
+      color: #e63946;
+      font-size: 28px;
+    }
+
+    .result-prize {
+      font-size: 30px;
+      font-weight: bold;
+      margin: 22px 0;
+    }
+
+    .close-button {
+      width: 100%;
+      height: 48px;
+      border: none;
+      border-radius: 12px;
+      background: #e63946;
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+
+<body>
+
+  <header class="header">
+    <h1>🎪 hululugame 抽抽樂</h1>
+    <p>消費享抽獎機會・好禮等你帶回家</p>
+  </header>
+
+
+  <main class="container">
+
+    <section class="card">
+      <div class="campaign-title">
+        🎉 2026年8月抽抽樂
+      </div>
+
+      <div class="remaining">
+        剩餘 19 / 20 格
+      </div>
+    </section>
+
+
+    <section class="card prizes">
+
+      <h2>🎁 本期獎品</h2>
+
+      <div class="prize-row">
+        <span>📱 iPhone 頭獎</span>
+        <strong>× 1</strong>
+      </div>
+
+      <div class="prize-row">
+        <span>🎟️ 9折券</span>
+        <strong>× 2</strong>
+      </div>
+
+      <div class="prize-row">
+        <span>🎫 95折券</span>
+        <strong>× 5</strong>
+      </div>
+
+      <div class="prize-row">
+        <span>💰 $100 儲值金</span>
+        <strong>× 4</strong>
+      </div>
+
+    </section>
+
+
+    <section class="card">
+
+      <div class="login-title">
+        🎫 輸入你的抽獎碼
+      </div>
+
+      <input
+        id="accessCode"
+        class="input"
+        placeholder="例如：TEST001"
+      >
+
+      <button class="button" onclick="checkCode()">
+        查詢我的抽獎次數
+      </button>
+
+      <div id="drawInfo" class="draw-info">
+        尚未輸入抽獎碼
+      </div>
+
+    </section>
+
+
+    <section class="card">
+
+      <div class="board-title">
+        🧧 選一格抽抽樂
+      </div>
+
+      <div id="board" class="board"></div>
+
+    </section>
+
+
+    <section class="card notice">
+
+      消費滿指定金額即可獲得抽獎機會。<br>
+      每一格只能被抽取一次。<br>
+      實際獎品與領獎方式以活動公告為準。
+
+    </section>
+
+  </main>
+
+
+  <div id="resultOverlay" class="result-overlay">
+
+    <div class="result-box">
+
+      <div style="font-size:50px;">🎉</div>
+
+      <h2>恭喜你抽中了</h2>
+
+      <div id="resultPrize" class="result-prize">
+        95折券
+      </div>
+
+      <button class="close-button" onclick="closeResult()">
+        收下獎品
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <script>
+
+    const board = document.getElementById("board");
+
+    for (let i = 1; i <= 20; i++) {
+
+      const slot = document.createElement("div");
+
+      slot.className = "slot";
+
+      slot.innerHTML = `
+        <span>🧧</span>
+        ${String(i).padStart(2, "0")}
+      `;
+
+      if (i === 1) {
+
+        slot.classList.add("drawn");
+
+        slot.innerHTML = `
+          <span>✓</span>
+          01 已抽
+        `;
+
+      }
+
+      slot.onclick = function () {
+        demoDraw(i);
+      };
+
+      board.appendChild(slot);
+
+    }
+
+
+    function checkCode() {
+
+      const code =
+        document.getElementById("accessCode").value.trim();
+
+      if (!code) {
+
+        alert("請先輸入抽獎碼");
+
+        return;
+
+      }
+
+      document.getElementById("drawInfo").innerHTML =
+        "🎟️ 目前剩餘 <strong>2 次</strong>抽獎機會";
+
+    }
+
+
+    function demoDraw(slotNumber) {
+
+      const code =
+        document.getElementById("accessCode").value.trim();
+
+      if (!code) {
+
+        alert("請先輸入抽獎碼");
+
+        return;
+
+      }
+
+      if (slotNumber === 1) {
+
+        alert("這一格已經被抽走囉！");
+
+        return;
+
+      }
+
+      document.getElementById("resultPrize").innerText =
+        "🎁 測試獎品";
+
+      document.getElementById("resultOverlay").style.display =
+        "flex";
+
+    }
+
+
+    function closeResult() {
+
+      document.getElementById("resultOverlay").style.display =
+        "none";
+
+    }
+
+  </script>
+
+</body>
+</html>
