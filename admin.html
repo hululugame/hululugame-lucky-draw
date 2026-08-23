@@ -143,9 +143,9 @@
 
       <div id="adminEmail" class="small" style="margin-bottom:16px;"></div>
 
-      <button class="menu-button" onclick="comingSoon()">
-        🎪 管理每期抽抽樂
-      </button>
+      <button class="menu-button" onclick="openCampaignManager()">
+  🎪 管理每期抽抽樂
+</button>
 
       <button class="menu-button" onclick="comingSoon()">
         🎁 管理獎品
@@ -170,7 +170,47 @@
       <button class="button secondary" onclick="logout()">
         登出
       </button>
+<div id="campaignManager" class="hidden" style="margin-top:20px;">
 
+  <hr style="border:none;border-top:1px solid #ddd;margin:20px 0;">
+
+  <h2>🎪 管理每期抽抽樂</h2>
+
+  <input
+    id="campaignTitle"
+    class="input"
+    placeholder="例如：2026年9月抽抽樂"
+  >
+
+  <input
+    id="campaignSlots"
+    class="input"
+    type="number"
+    inputmode="numeric"
+    placeholder="總格數，例如：300"
+  >
+
+  <input
+    id="campaignSpend"
+    class="input"
+    type="number"
+    inputmode="numeric"
+    placeholder="消費多少送1抽，例如：1000"
+  >
+
+  <button class="button" onclick="createCampaign()">
+    ＋ 建立新一期
+  </button>
+
+  <div id="campaignStatus" class="status"></div>
+
+  <h3 style="margin-top:25px;">已建立活動</h3>
+
+  <div id="campaignList">
+    載入中...
+  </div>
+
+</div>
     </section>
 
   </main>
@@ -256,7 +296,193 @@
 
     }
 
+async function openCampaignManager() {
 
+  const box =
+    document.getElementById('campaignManager');
+
+  box.classList.toggle('hidden');
+
+  if (!box.classList.contains('hidden')) {
+    await loadCampaigns();
+  }
+
+}
+
+
+async function loadCampaigns() {
+
+  const list =
+    document.getElementById('campaignList');
+
+  list.innerHTML = '載入中...';
+
+  const { data, error } =
+    await db.rpc('admin_get_campaigns');
+
+  if (error) {
+
+    console.error(error);
+
+    list.innerHTML =
+      '讀取失敗：' + error.message;
+
+    return;
+
+  }
+
+  if (!data || data.length === 0) {
+
+    list.innerHTML =
+      '<div class="small">目前沒有活動</div>';
+
+    return;
+
+  }
+
+  list.innerHTML = '';
+
+  data.forEach(item => {
+
+    const box =
+      document.createElement('div');
+
+    box.style.background = '#f3f3f3';
+    box.style.borderRadius = '12px';
+    box.style.padding = '14px';
+    box.style.marginBottom = '10px';
+
+    box.innerHTML = `
+      <div style="font-weight:bold;font-size:17px;">
+        ${escapeHtmlAdmin(item.title)}
+      </div>
+
+      <div class="small" style="margin-top:6px;">
+        格數：${item.total_slots}<br>
+        消費 ${item.spend_per_draw} 元送 1 抽<br>
+        狀態：${escapeHtmlAdmin(item.status)}
+      </div>
+    `;
+
+    list.appendChild(box);
+
+  });
+
+}
+
+
+async function createCampaign() {
+
+  const title =
+    document.getElementById('campaignTitle')
+      .value.trim();
+
+  const slots =
+    Number(
+      document.getElementById('campaignSlots')
+        .value
+    );
+
+  const spend =
+    Number(
+      document.getElementById('campaignSpend')
+        .value
+    );
+
+  const status =
+    document.getElementById('campaignStatus');
+
+
+  if (!title) {
+
+    status.innerText =
+      '請輸入活動名稱';
+
+    return;
+
+  }
+
+
+  if (!Number.isInteger(slots) || slots <= 0) {
+
+    status.innerText =
+      '格數要填大於0的整數';
+
+    return;
+
+  }
+
+
+  if (!Number.isInteger(spend) || spend < 0) {
+
+    status.innerText =
+      '消費金額格式不正確';
+
+    return;
+
+  }
+
+
+  status.innerText =
+    '建立中...';
+
+
+  const { data, error } =
+    await db.rpc(
+      'admin_create_campaign',
+      {
+        p_title: title,
+        p_total_slots: slots,
+        p_spend_per_draw: spend
+      }
+    );
+
+
+  if (error) {
+
+    console.error(error);
+
+    status.innerText =
+      '建立失敗：' + error.message;
+
+    return;
+
+  }
+
+
+  status.innerText =
+    '✅ 建立成功';
+
+
+  document.getElementById(
+    'campaignTitle'
+  ).value = '';
+
+  document.getElementById(
+    'campaignSlots'
+  ).value = '';
+
+  document.getElementById(
+    'campaignSpend'
+  ).value = '';
+
+
+  await loadCampaigns();
+
+}
+
+
+function escapeHtmlAdmin(text) {
+
+  const div =
+    document.createElement('div');
+
+  div.textContent =
+    text ?? '';
+
+  return div.innerHTML;
+
+}
     function comingSoon() {
 
       alert('這個功能下一步開始做');
