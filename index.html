@@ -425,7 +425,13 @@ data.forEach(prize => {
 
     board.innerHTML = '';
 
-    data.forEach(item => {
+if (!data || data.length === 0) {
+  board.innerHTML =
+    '<div class="small">目前沒有可抽的格子</div>';
+  return;
+}
+
+data.forEach(item => {
 
       const slot =
         document.createElement('div');
