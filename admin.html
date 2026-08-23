@@ -256,6 +256,13 @@
     ➕ 新增獎品
   </button>
 
+<button
+  class="button light"
+  onclick="generateCampaignSlots()"
+>
+  🎲 產生 / 重新隨機格子
+</button>
+
   <div
     id="prizeStatus"
     class="status"
@@ -738,6 +745,63 @@ async function addPrize() {
 
 
   await loadCampaignPrizes(campaignId);
+
+}
+
+async function generateCampaignSlots() {
+
+  const campaignId =
+    document.getElementById('prizeCampaignSelect')
+      .value;
+
+  const status =
+    document.getElementById('prizeStatus');
+
+
+  if (!campaignId) {
+
+    status.innerText =
+      '請先選擇活動';
+
+    return;
+
+  }
+
+
+  const ok = confirm(
+    '確定要產生 / 重新隨機這一期的抽獎格子嗎？\n\n如果已經有人抽過，系統會自動禁止重新產生。'
+  );
+
+  if (!ok) return;
+
+
+  status.innerText =
+    '正在產生格子...';
+
+
+  const { error } =
+    await db.rpc(
+      'admin_generate_campaign_slots',
+      {
+        p_campaign_id: campaignId
+      }
+    );
+
+
+  if (error) {
+
+    console.error(error);
+
+    status.innerText =
+      '產生失敗：' + error.message;
+
+    return;
+
+  }
+
+
+  status.innerText =
+    '✅ 格子已產生並隨機分配完成';
 
 }
 
