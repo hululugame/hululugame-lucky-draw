@@ -1264,30 +1264,33 @@ function renderDrawResults(items) {
         : '';
 
 
-    const statusHtml =
-      item.redeemed
-        ? `
-          <div style="margin-top:10px;font-weight:bold;">
-            ✅ 已領取
-          </div>
-
-          <div class="small">
-            領取時間：${escapeHtmlAdmin(redeemedTime)}
-          </div>
-        `
-        : `
-          <div style="margin-top:10px;font-weight:bold;color:#e63946;">
-            ⏳ 待領取
-          </div>
-
-          <button
-            class="button"
-            style="margin-top:10px;"
-            onclick="markRedeemed('${item.result_id}')"
-          >
-            ✅ 標記已領取
-          </button>
-        `;
+    const statusHtml = !item.requires_redemption
+  ? `
+      <div style="margin-top:10px;font-weight:bold;">
+        ✅ 無需領取
+      </div>
+    `
+  : item.redeemed
+    ? `
+        <div style="margin-top:10px;font-weight:bold;">
+          ✅ 已領取
+        </div>
+        <div class="small">
+          領取時間：${escapeHtmlAdmin(redeemedTime)}
+        </div>
+      `
+    : `
+        <div style="margin-top:10px;font-weight:bold;color:#e63946;">
+          ⏳ 待領取
+        </div>
+        <button
+          class="button"
+          style="margin-top:10px;"
+          onclick="markRedeemed('${item.result_id}')"
+        >
+          ✅ 標記已領取
+        </button>
+      `;
 
 
     box.innerHTML = `
