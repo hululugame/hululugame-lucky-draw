@@ -245,9 +245,17 @@
       'sb_publishable_KN1SvNhpJtxfTg-Lz_D16w_6L41j_wW';
 
     const db = supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth: {
+      storageKey: 'hululugame-admin-auth',
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    }
+  }
+);
 
 
     async function login() {
@@ -280,9 +288,23 @@
         return;
       }
 
-      status.innerText = '';
+      const { error: adminError } =
+  await db.rpc('admin_get_campaigns');
 
-      showAdmin(data.user);
+if (adminError) {
+
+  await db.auth.signOut();
+
+  status.innerText =
+    '❌ 這個帳號沒有管理員權限';
+
+  return;
+
+}
+
+status.innerText = '';
+
+showAdmin(data.user);
 
     }
 
@@ -318,12 +340,18 @@
 
 async function openCampaignManager() {
 
-  const box =
+  const campaignBox =
     document.getElementById('campaignManager');
 
-  box.classList.toggle('hidden');
+  const memberBox =
+    document.getElementById('memberDrawManager');
 
-  if (!box.classList.contains('hidden')) {
+  // 關閉會員加抽區
+  memberBox.classList.add('hidden');
+
+  campaignBox.classList.toggle('hidden');
+
+  if (!campaignBox.classList.contains('hidden')) {
     await loadCampaigns();
   }
 
@@ -505,12 +533,18 @@ function escapeHtmlAdmin(text) {
 }
 async function openMemberDrawManager() {
 
-  const box =
+  const memberBox =
     document.getElementById('memberDrawManager');
 
-  box.classList.toggle('hidden');
+  const campaignBox =
+    document.getElementById('campaignManager');
 
-  if (!box.classList.contains('hidden')) {
+  // 關閉活動管理區
+  campaignBox.classList.add('hidden');
+
+  memberBox.classList.toggle('hidden');
+
+  if (!memberBox.classList.contains('hidden')) {
     await loadMembers();
   }
 
@@ -782,14 +816,27 @@ function filterMembers() {
 
     async function checkSession() {
 
-      const { data } =
-        await db.auth.getSession();
+  const { data } =
+    await db.auth.getSession();
 
-      if (data.session) {
-        showAdmin(data.session.user);
-      }
+  if (!data.session) {
+    return;
+  }
 
-    }
+  const { error } =
+    await db.rpc('admin_get_campaigns');
+
+  if (error) {
+
+    await db.auth.signOut();
+
+    return;
+
+  }
+
+  showAdmin(data.session.user);
+
+}
 
 
     checkSession();
