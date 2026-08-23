@@ -542,10 +542,25 @@ async function loadMembers() {
   }
 
 
-  if (!data || data.length === 0) {
+  allMembers =
+    data || [];
+
+
+  renderMembers(allMembers);
+
+}
+
+
+function renderMembers(members) {
+
+  const list =
+    document.getElementById('memberList');
+
+
+  if (!members || members.length === 0) {
 
     list.innerHTML =
-      '<div class="small">目前沒有會員</div>';
+      '<div class="small">找不到符合的會員</div>';
 
     return;
 
@@ -555,7 +570,7 @@ async function loadMembers() {
   list.innerHTML = '';
 
 
-  data.forEach(member => {
+  members.forEach(member => {
 
     const box =
       document.createElement('div');
@@ -644,7 +659,6 @@ async function loadMembers() {
   });
 
 }
-
 
 async function addMemberDraws(
   userId,
