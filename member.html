@@ -235,7 +235,24 @@
         <div id="drawDetail" class="small" style="margin-top:8px;"></div>
 
       </div>
+      
+<div style="margin-top:18px;">
 
+  <h3>🎟️ 兌換活動碼</h3>
+
+  <input
+    id="redeemCodeInput"
+    class="input"
+    placeholder="輸入兌換碼，例如：HULU888"
+  >
+
+  <button class="button" onclick="redeemCode()">
+    兌換抽獎次數
+  </button>
+
+  <div id="redeemMemberStatus" class="status"></div>
+
+</div>
 
       <input
         id="displayName"
@@ -592,6 +609,76 @@
 
     }
 
+async function redeemCode() {
+
+  const code =
+    document.getElementById('redeemCodeInput')
+      .value.trim();
+
+  const status =
+    document.getElementById('redeemMemberStatus');
+
+
+  if (!code) {
+
+    status.innerText =
+      '請輸入兌換碼';
+
+    return;
+
+  }
+
+
+  status.innerText =
+    '兌換中...';
+
+
+  const { data, error } =
+    await db.rpc(
+      'redeem_draw_code',
+      {
+        p_code: code
+      }
+    );
+
+
+  if (error) {
+
+    console.error(error);
+
+    status.innerText =
+      '❌ ' + error.message;
+
+    return;
+
+  }
+
+
+  if (!data || data.length === 0) {
+
+    status.innerText =
+      '兌換失敗';
+
+    return;
+
+  }
+
+
+  const result =
+    data[0];
+
+
+  status.innerText =
+    `✅ 兌換成功！獲得 ${result.draws_received} 抽`;
+
+
+  document.getElementById('redeemCodeInput')
+    .value = '';
+
+
+  await loadDrawStatus();
+
+}
 
     function goDraw() {
 
