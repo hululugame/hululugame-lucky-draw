@@ -248,6 +248,14 @@
     >
     需要領取 / 兌領
   </label>
+  
+  <label style="display:block;margin:10px 0;">
+  <input
+    id="prizeIsJackpot"
+    type="checkbox"
+  >
+  ⭐ 這是頭獎
+</label>
 
   <button
     class="button"
@@ -634,11 +642,14 @@ async function loadCampaignPrizes(campaignId) {
   </div>
 
   <div class="small" style="margin-top:6px;">
-    數量：${item.quantity}<br>
-    ${item.requires_redemption
-      ? '✅ 需要領取 / 兌領'
-      : 'ℹ️ 無需領取'}
-  </div>
+  數量：${item.quantity}<br>
+  ${item.requires_redemption
+    ? '✅ 需要領取 / 兌領'
+    : 'ℹ️ 無需領取'}<br>
+  ${item.is_jackpot
+    ? '⭐ 頭獎'
+    : '一般獎品'}
+</div>
 
   <button
     class="button light"
@@ -674,6 +685,10 @@ async function addPrize() {
   const requiresRedemption =
     document.getElementById('prizeRequiresRedemption')
       .checked;
+      
+      const isJackpot =
+  document.getElementById('prizeIsJackpot')
+    .checked;
 
   const status =
     document.getElementById('prizeStatus');
@@ -720,7 +735,8 @@ async function addPrize() {
         p_campaign_id: campaignId,
         p_name: name,
         p_quantity: quantity,
-        p_requires_redemption: requiresRedemption
+        p_requires_redemption: requiresRedemption,
+p_is_jackpot: isJackpot
       }
     );
 
@@ -749,6 +765,9 @@ async function addPrize() {
 
   document.getElementById('prizeRequiresRedemption')
     .checked = true;
+    
+    document.getElementById('prizeIsJackpot')
+  .checked = false;
 
 
   await loadCampaignPrizes(campaignId);
@@ -910,6 +929,48 @@ async function loadCampaigns() {
         🚀 發布活動
       </button>
     `;
+    
+    const settingsHtml = `
+  <div style="margin-top:12px;">
+
+    <div class="small" style="margin-bottom:6px;">
+      開始時間
+    </div>
+
+    <input
+      class="input"
+      type="datetime-local"
+      id="start-${item.id}"
+    >
+
+    <div class="small" style="margin:8px 0 6px;">
+      結束時間
+    </div>
+
+    <input
+      class="input"
+      type="datetime-local"
+      id="end-${item.id}"
+    >
+
+    <label style="display:block;margin-top:10px;">
+      <input
+        type="checkbox"
+        id="jackpot-end-${item.id}"
+      >
+      頭獎抽出後提前結束
+    </label>
+
+    <button
+      class="button light"
+      style="margin-top:10px;"
+      onclick="saveCampaignSettings('${item.id}')"
+    >
+      💾 儲存活動設定
+    </button>
+
+  </div>
+`;
 
 box.innerHTML = `
   <div style="font-weight:bold;font-size:17px;">
@@ -923,9 +984,41 @@ box.innerHTML = `
   </div>
 
   ${publishButton}
+  ${settingsHtml}
 `;
 
     list.appendChild(box);
+
+const startInput =
+  document.getElementById(`start-${item.id}`);
+
+const endInput =
+  document.getElementById(`end-${item.id}`);
+
+const jackpotCheckbox =
+  document.getElementById(`jackpot-end-${item.id}`);
+
+
+if (item.start_at && startInput) {
+  startInput.value =
+    new Date(item.start_at)
+      .toISOString()
+      .slice(0, 16);
+}
+
+
+if (item.end_at && endInput) {
+  endInput.value =
+    new Date(item.end_at)
+      .toISOString()
+      .slice(0, 16);
+}
+
+
+if (jackpotCheckbox) {
+  jackpotCheckbox.checked =
+    !!item.end_when_jackpot_drawn;
+}
 
   });
 
@@ -1064,6 +1157,63 @@ async function publishCampaign(campaignId) {
 
 
   alert('✅ 活動已正式發布');
+
+  await loadCampaigns();
+
+}
+
+async function saveCampaignSettings(campaignId) {
+
+  const startValue =
+    document.getElementById(`start-${campaignId}`)
+      .value;
+
+  const endValue =
+    document.getElementById(`end-${campaignId}`)
+      .value;
+
+  const endWhenJackpot =
+    document.getElementById(`jackpot-end-${campaignId}`)
+      .checked;
+
+
+  const startAt =
+    startValue
+      ? new Date(startValue).toISOString()
+      : null;
+
+  const endAt =
+    endValue
+      ? new Date(endValue).toISOString()
+      : null;
+
+
+  const { error } =
+    await db.rpc(
+      'admin_update_campaign_settings',
+      {
+        p_campaign_id: campaignId,
+        p_start_at: startAt,
+        p_end_at: endAt,
+        p_end_when_jackpot_drawn: endWhenJackpot
+      }
+    );
+
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      '儲存失敗：' + error.message
+    );
+
+    return;
+
+  }
+
+
+  alert('✅ 活動設定已儲存');
 
   await loadCampaigns();
 
