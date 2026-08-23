@@ -714,14 +714,19 @@ async function loadMyPrizes() {
     return;
   }
 
-  if (!data || data.length === 0) {
-    list.innerHTML = '目前還沒有抽獎紀錄';
-    return;
-  }
+  const prizes =
+  (data || []).filter(
+    item => item.requires_redemption
+  );
 
-  list.innerHTML = '';
+if (prizes.length === 0) {
+  list.innerHTML = '目前還沒有中獎品';
+  return;
+}
 
-  data.forEach(item => {
+list.innerHTML = '';
+
+prizes.forEach(item => {
 
     const box = document.createElement('div');
 
