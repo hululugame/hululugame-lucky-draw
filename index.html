@@ -212,28 +212,50 @@
   </section>
 
 
-  <section class="card">
+<section class="card">
 
-    <div style="font-weight:bold;font-size:18px;margin-bottom:10px;">
-      🎫 輸入你的抽獎碼
+  <div id="memberArea">
+
+    <div id="guestView">
+
+      <div style="font-weight:bold;font-size:18px;margin-bottom:10px;">
+        👤 會員登入後即可抽獎
+      </div>
+
+      <button class="button" onclick="goMemberLogin()">
+        登入 / 註冊會員
+      </button>
+
     </div>
 
-    <input
-      id="accessCode"
-      class="input"
-      placeholder="例如：TEST001"
-      autocomplete="off"
-    >
 
-    <button class="button" onclick="checkCode()">
-      查詢我的抽獎次數
-    </button>
+    <div id="memberView" class="hidden">
 
-    <div id="drawInfo" class="draw-info">
-      尚未輸入抽獎碼
+      <div style="font-weight:bold;font-size:18px;">
+        👤 <span id="memberName">會員</span>
+      </div>
+
+      <div id="memberEmail"
+           style="font-size:14px;color:#777;margin-top:5px;">
+      </div>
+
+      <div id="drawInfo" class="draw-info">
+        載入抽獎次數中...
+      </div>
+
+      <button
+        class="button"
+        style="margin-top:12px;background:#444;"
+        onclick="goMemberCenter()"
+      >
+        會員中心 / 兌換活動碼
+      </button>
+
     </div>
 
-  </section>
+  </div>
+
+</section>
 
 
   <section class="card">
@@ -306,8 +328,8 @@
 );
 
 
-  let currentAccessCode = '';
-  let remainingDraws = 0;
+  let currentUser = null;
+let remainingDraws = 0;
 
 
   async function loadCampaign() {
@@ -422,53 +444,121 @@
   }
 
 
-  async function checkCode() {
+  async function checkMemberSession() {
 
-    const code =
-      document.getElementById('accessCode')
-        .value.trim();
+  const { data } =
+    await db.auth.getSession();
 
-    if (!code) {
-      alert('請先輸入抽獎碼');
-      return;
-    }
+  if (!data.session) {
 
-    const { data, error } =
-      await db.rpc(
-        'check_draw_code',
-        {
-          p_access_code: code
-        }
-      );
+    currentUser = null;
+    remainingDraws = 0;
 
-    if (error) {
-      console.error(error);
-      alert('查詢失敗，請稍後再試');
-      return;
-    }
+    document.getElementById('guestView')
+      .classList.remove('hidden');
 
-    if (!data || data.length === 0) {
+    document.getElementById('memberView')
+      .classList.add('hidden');
 
-      currentAccessCode = '';
-      remainingDraws = 0;
+    return;
 
-      document.getElementById('drawInfo').innerText =
-        '❌ 找不到這個抽獎碼';
+  }
 
-      return;
-    }
 
-    currentAccessCode = code;
-    remainingDraws =
-      data[0].remaining_draws;
+  currentUser =
+    data.session.user;
 
-    document.getElementById('drawInfo').innerHTML =
-      `🎟️ ${escapeHtml(data[0].display_name || '客人')}
-       目前剩餘
+
+  document.getElementById('guestView')
+    .classList.add('hidden');
+
+  document.getElementById('memberView')
+    .classList.remove('hidden');
+
+
+  document.getElementById('memberEmail')
+    .innerText =
+      currentUser.email || '';
+
+
+  const { data: profile } =
+    await db.rpc('get_my_profile');
+
+
+  if (profile && profile.length > 0) {
+
+    document.getElementById('memberName')
+      .innerText =
+        profile[0].display_name ||
+        '會員';
+
+  }
+
+
+  await loadMemberDrawStatus();
+
+}
+
+
+async function loadMemberDrawStatus() {
+
+  const { data, error } =
+    await db.rpc('get_my_draw_status');
+
+
+  if (error) {
+
+    console.error(error);
+
+    document.getElementById('drawInfo')
+      .innerText =
+        '抽獎次數讀取失敗';
+
+    return;
+
+  }
+
+
+  if (!data || data.length === 0) {
+
+    remainingDraws = 0;
+
+    document.getElementById('drawInfo')
+      .innerText =
+        '🎟️ 目前剩餘 0 次抽獎機會';
+
+    return;
+
+  }
+
+
+  remainingDraws =
+    data[0].remaining_draws ?? 0;
+
+
+  document.getElementById('drawInfo')
+    .innerHTML =
+      `🎟️ 目前剩餘
        <strong>${remainingDraws} 次</strong>
        抽獎機會`;
 
-  }
+}
+
+
+function goMemberLogin() {
+
+  window.location.href =
+    './member.html';
+
+}
+
+
+function goMemberCenter() {
+
+  window.location.href =
+    './member.html';
+
+}
 
 
   async function drawSlot(slotNumber) {
