@@ -290,9 +290,17 @@
       'sb_publishable_KN1SvNhpJtxfTg-Lz_D16w_6L41j_wW';
 
     const db = supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth: {
+      storageKey: 'hululugame-member-auth',
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    }
+  }
+);
 
 
     function showLogin() {
