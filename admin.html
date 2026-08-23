@@ -629,17 +629,25 @@ async function loadCampaignPrizes(campaignId) {
     box.style.marginBottom = '10px';
 
     box.innerHTML = `
-      <div style="font-weight:bold;">
-        🎁 ${escapeHtmlAdmin(item.name)}
-      </div>
+  <div style="font-weight:bold;">
+    🎁 ${escapeHtmlAdmin(item.name)}
+  </div>
 
-      <div class="small" style="margin-top:6px;">
-        數量：${item.quantity}<br>
-        ${item.requires_redemption
-          ? '✅ 需要領取 / 兌領'
-          : 'ℹ️ 無需領取'}
-      </div>
-    `;
+  <div class="small" style="margin-top:6px;">
+    數量：${item.quantity}<br>
+    ${item.requires_redemption
+      ? '✅ 需要領取 / 兌領'
+      : 'ℹ️ 無需領取'}
+  </div>
+
+  <button
+    class="button light"
+    style="margin-top:10px;"
+    onclick="deletePrize('${item.id}')"
+  >
+    🗑️ 刪除獎品
+  </button>
+`;
 
     list.appendChild(box);
 
@@ -742,6 +750,47 @@ async function addPrize() {
   document.getElementById('prizeRequiresRedemption')
     .checked = true;
 
+
+  await loadCampaignPrizes(campaignId);
+
+}
+
+async function deletePrize(prizeId) {
+
+  const campaignId =
+    document.getElementById('prizeCampaignSelect')
+      .value;
+
+  const ok = confirm(
+    '確定要刪除這個獎品嗎？'
+  );
+
+  if (!ok) return;
+
+
+  const { error } =
+    await db.rpc(
+      'admin_delete_prize',
+      {
+        p_prize_id: prizeId
+      }
+    );
+
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      '刪除失敗：' + error.message
+    );
+
+    return;
+
+  }
+
+
+  alert('✅ 獎品已刪除');
 
   await loadCampaignPrizes(campaignId);
 
