@@ -483,17 +483,35 @@ async function loadCampaigns() {
     box.style.padding = '14px';
     box.style.marginBottom = '10px';
 
-    box.innerHTML = `
-      <div style="font-weight:bold;font-size:17px;">
-        ${escapeHtmlAdmin(item.title)}
+    const publishButton = item.status === 'active'
+  ? `
+      <div style="margin-top:10px;font-weight:bold;">
+        ✅ 目前正式活動
       </div>
-
-      <div class="small" style="margin-top:6px;">
-        格數：${item.total_slots}<br>
-        消費 ${item.spend_per_draw} 元送 1 抽<br>
-        狀態：${escapeHtmlAdmin(item.status)}
-      </div>
+    `
+  : `
+      <button
+        class="button"
+        style="margin-top:10px;"
+        onclick="publishCampaign('${item.id}')"
+      >
+        🚀 發布活動
+      </button>
     `;
+
+box.innerHTML = `
+  <div style="font-weight:bold;font-size:17px;">
+    ${escapeHtmlAdmin(item.title)}
+  </div>
+
+  <div class="small" style="margin-top:6px;">
+    格數：${item.total_slots}<br>
+    消費 ${item.spend_per_draw} 元送 1 抽<br>
+    狀態：${escapeHtmlAdmin(item.status)}
+  </div>
+
+  ${publishButton}
+`;
 
     list.appendChild(box);
 
@@ -597,6 +615,43 @@ async function createCampaign() {
     'campaignSpend'
   ).value = '';
 
+
+  await loadCampaigns();
+
+}
+
+async function publishCampaign(campaignId) {
+
+  const ok = confirm(
+    '確定要發布這一期活動嗎？\n\n目前其他 active 活動會自動變成 ended。'
+  );
+
+  if (!ok) return;
+
+
+  const { error } =
+    await db.rpc(
+      'admin_publish_campaign',
+      {
+        p_campaign_id: campaignId
+      }
+    );
+
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      '發布失敗：' + error.message
+    );
+
+    return;
+
+  }
+
+
+  alert('✅ 活動已正式發布');
 
   await loadCampaigns();
 
