@@ -151,9 +151,9 @@
         🎁 管理獎品
       </button>
 
-      <button class="menu-button" onclick="comingSoon()">
-        🎟️ 建立客人抽獎碼
-      </button>
+      <button class="menu-button" onclick="openRedemptionManager()">
+  🎟️ 兌換碼管理
+</button>
 
       <button class="menu-button" onclick="openMemberDrawManager()">
   ➕ 幫客人增加抽數
@@ -228,6 +228,62 @@
 <div id="memberList">
   載入會員中...
 </div>
+
+</div>
+
+<div id="redemptionManager" class="hidden" style="margin-top:20px;">
+
+  <hr style="border:none;border-top:1px solid #ddd;margin:20px 0;">
+
+  <h2>🎟️ 兌換碼管理</h2>
+
+  <input
+    id="redeemCode"
+    class="input"
+    placeholder="兌換碼，例如：HULU888"
+  >
+
+  <input
+    id="redeemTitle"
+    class="input"
+    placeholder="活動名稱，例如：LINE群加碼"
+  >
+
+  <input
+    id="redeemDraws"
+    class="input"
+    type="number"
+    inputmode="numeric"
+    placeholder="可兌換幾抽，例如：1"
+  >
+
+  <input
+    id="redeemMax"
+    class="input"
+    type="number"
+    inputmode="numeric"
+    placeholder="總兌換上限，例如：100；不限制可留空"
+  >
+
+  <input
+    id="redeemEnd"
+    class="input"
+    type="datetime-local"
+  >
+
+  <button class="button" onclick="createRedemptionCode()">
+    ＋ 建立兌換碼
+  </button>
+
+  <div id="redeemStatus" class="status"></div>
+
+  <h3 style="margin-top:24px;">
+    已建立兌換碼
+  </h3>
+
+  <div id="redeemList">
+    載入中...
+  </div>
 
 </div>
 
@@ -348,6 +404,10 @@ async function openCampaignManager() {
 
   // 關閉會員加抽區
   memberBox.classList.add('hidden');
+  
+    // 關閉兌換碼管理區
+  document.getElementById('redemptionManager')
+  .classList.add('hidden');
 
   campaignBox.classList.toggle('hidden');
 
@@ -542,6 +602,10 @@ async function openMemberDrawManager() {
   // 關閉活動管理區
   campaignBox.classList.add('hidden');
 
+// 關閉兌換碼管理區
+document.getElementById('redemptionManager')
+  .classList.add('hidden');
+  
   memberBox.classList.toggle('hidden');
 
   if (!memberBox.classList.contains('hidden')) {
@@ -804,6 +868,219 @@ function filterMembers() {
     });
 
   renderMembers(filtered);
+
+}
+
+async function openRedemptionManager() {
+
+  const box =
+    document.getElementById('redemptionManager');
+
+  document.getElementById('campaignManager')
+    .classList.add('hidden');
+
+  document.getElementById('memberDrawManager')
+    .classList.add('hidden');
+
+  box.classList.toggle('hidden');
+
+  if (!box.classList.contains('hidden')) {
+    await loadRedemptionCodes();
+  }
+
+}
+
+
+async function loadRedemptionCodes() {
+
+  const list =
+    document.getElementById('redeemList');
+
+  list.innerHTML = '載入中...';
+
+
+  const { data, error } =
+    await db.rpc('admin_get_redemption_codes');
+
+
+  if (error) {
+
+    console.error(error);
+
+    list.innerHTML =
+      '讀取失敗：' + error.message;
+
+    return;
+
+  }
+
+
+  if (!data || data.length === 0) {
+
+    list.innerHTML =
+      '<div class="small">目前沒有兌換碼</div>';
+
+    return;
+
+  }
+
+
+  list.innerHTML = '';
+
+
+  data.forEach(item => {
+
+    const box =
+      document.createElement('div');
+
+    box.style.background = '#f3f3f3';
+    box.style.borderRadius = '12px';
+    box.style.padding = '14px';
+    box.style.marginBottom = '12px';
+
+
+    const maxText =
+      item.max_redemptions == null
+        ? '不限'
+        : item.max_redemptions;
+
+
+    const endText =
+      item.ends_at
+        ? new Date(item.ends_at).toLocaleString()
+        : '無期限';
+
+
+    box.innerHTML = `
+      <div style="font-weight:bold;font-size:18px;">
+        🎟️ ${escapeHtmlAdmin(item.code)}
+      </div>
+
+      <div class="small" style="margin-top:6px;">
+        ${escapeHtmlAdmin(item.title || '')}<br>
+        可兌換：${item.draws} 抽<br>
+        已兌換：${item.current_redemptions} / ${maxText}<br>
+        到期：${escapeHtmlAdmin(endText)}<br>
+        狀態：${item.is_active ? '啟用中' : '已停用'}
+      </div>
+    `;
+
+    list.appendChild(box);
+
+  });
+
+}
+
+
+async function createRedemptionCode() {
+
+  const code =
+    document.getElementById('redeemCode')
+      .value.trim();
+
+  const title =
+    document.getElementById('redeemTitle')
+      .value.trim();
+
+  const draws =
+    Number(
+      document.getElementById('redeemDraws').value
+    );
+
+  const maxRaw =
+    document.getElementById('redeemMax').value.trim();
+
+  const max =
+    maxRaw === ''
+      ? null
+      : Number(maxRaw);
+
+  const endRaw =
+    document.getElementById('redeemEnd').value;
+
+  const endsAt =
+    endRaw
+      ? new Date(endRaw).toISOString()
+      : null;
+
+  const status =
+    document.getElementById('redeemStatus');
+
+
+  if (!code) {
+
+    status.innerText =
+      '請輸入兌換碼';
+
+    return;
+
+  }
+
+
+  if (!Number.isInteger(draws) || draws <= 0) {
+
+    status.innerText =
+      '兌換抽數要填大於 0 的整數';
+
+    return;
+
+  }
+
+
+  if (
+    max !== null &&
+    (!Number.isInteger(max) || max <= 0)
+  ) {
+
+    status.innerText =
+      '兌換上限格式不正確';
+
+    return;
+
+  }
+
+
+  status.innerText =
+    '建立中...';
+
+
+  const { error } =
+    await db.rpc(
+      'admin_create_redemption_code',
+      {
+        p_code: code,
+        p_title: title,
+        p_draws: draws,
+        p_max_redemptions: max,
+        p_ends_at: endsAt
+      }
+    );
+
+
+  if (error) {
+
+    console.error(error);
+
+    status.innerText =
+      '建立失敗：' + error.message;
+
+    return;
+
+  }
+
+
+  status.innerText =
+    '✅ 兌換碼建立成功';
+
+
+  document.getElementById('redeemCode').value = '';
+  document.getElementById('redeemTitle').value = '';
+  document.getElementById('redeemDraws').value = '';
+  document.getElementById('redeemMax').value = '';
+  document.getElementById('redeemEnd').value = '';
+
+
+  await loadRedemptionCodes();
 
 }
 
