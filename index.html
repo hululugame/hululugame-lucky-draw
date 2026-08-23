@@ -348,7 +348,15 @@ let remainingDraws = 0;
       return;
     }
 
-    if (!data) return;
+    if (!data) {
+  document.getElementById('campaignTitle').innerText =
+    '🎪 目前沒有進行中的抽抽樂';
+
+  document.getElementById('remaining').innerText =
+    '新一期活動準備中，敬請期待！';
+
+  return;
+}
 
     document.getElementById('campaignTitle').innerText =
       '🎉 ' + data.title;
