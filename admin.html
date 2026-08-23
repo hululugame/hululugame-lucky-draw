@@ -147,9 +147,9 @@
   🎪 管理每期抽抽樂
 </button>
 
-      <button class="menu-button" onclick="comingSoon()">
-        🎁 管理獎品
-      </button>
+      <button class="button" onclick="openPrizeManager()">
+  🎁 管理獎品
+</button>
 
       <button class="menu-button" onclick="openRedemptionManager()">
   🎟️ 兌換碼管理
@@ -208,6 +208,65 @@
 
   <div id="campaignList">
     載入中...
+  </div>
+
+</div>
+
+<div id="prizeManager" class="hidden" style="margin-top:20px;">
+
+  <hr style="border:none;border-top:1px solid #ddd;margin:20px 0;">
+
+  <h2>🎁 獎品管理</h2>
+
+  <div class="small" style="margin-bottom:10px;">
+    先選擇要管理的活動
+  </div>
+
+  <select id="prizeCampaignSelect" class="input">
+    <option value="">請選擇活動</option>
+  </select>
+
+  <input
+    id="prizeName"
+    class="input"
+    placeholder="獎品名稱，例如：95折券"
+  >
+
+  <input
+    id="prizeQuantity"
+    class="input"
+    type="number"
+    min="1"
+    placeholder="獎品數量"
+  >
+
+  <label style="display:block;margin:10px 0;">
+    <input
+      id="prizeRequiresRedemption"
+      type="checkbox"
+      checked
+    >
+    需要領取 / 兌領
+  </label>
+
+  <button
+    class="button"
+    onclick="addPrize()"
+  >
+    ➕ 新增獎品
+  </button>
+
+  <div
+    id="prizeStatus"
+    class="status"
+  ></div>
+
+  <h3 style="margin-top:20px;">
+    已設定獎品
+  </h3>
+
+  <div id="prizeList">
+    請先選擇活動
   </div>
 
 </div>
@@ -440,6 +499,244 @@ document.getElementById('drawResultsManager')
 
 }
 
+async function openPrizeManager() {
+
+  document.getElementById('campaignManager')
+    .classList.add('hidden');
+
+  document.getElementById('memberDrawManager')
+    .classList.add('hidden');
+
+  document.getElementById('redemptionManager')
+    .classList.add('hidden');
+
+  document.getElementById('drawResultsManager')
+    .classList.add('hidden');
+
+  const prizeBox =
+    document.getElementById('prizeManager');
+
+  prizeBox.classList.toggle('hidden');
+
+  if (!prizeBox.classList.contains('hidden')) {
+    await loadPrizeCampaigns();
+  }
+
+}
+
+async function loadPrizeCampaigns() {
+
+  const select =
+    document.getElementById('prizeCampaignSelect');
+
+  select.innerHTML =
+    '<option value="">請選擇活動</option>';
+
+  const { data, error } =
+    await db.rpc('admin_get_campaigns');
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  (data || []).forEach(item => {
+
+    const option =
+      document.createElement('option');
+
+    option.value = item.id;
+
+    option.textContent =
+      `${item.title}（${item.status}）`;
+
+    select.appendChild(option);
+
+  });
+
+  select.onchange = async function() {
+
+    const campaignId = this.value;
+
+    if (!campaignId) {
+
+      document.getElementById('prizeList')
+        .innerHTML = '請先選擇活動';
+
+      return;
+    }
+
+    await loadCampaignPrizes(campaignId);
+
+  };
+
+}
+
+async function loadCampaignPrizes(campaignId) {
+
+  const list =
+    document.getElementById('prizeList');
+
+  list.innerHTML = '載入獎品中...';
+
+  const { data, error } =
+    await db.rpc(
+      'admin_get_campaign_prizes',
+      {
+        p_campaign_id: campaignId
+      }
+    );
+
+  if (error) {
+
+    console.error(error);
+
+    list.innerHTML =
+      '讀取獎品失敗：' + error.message;
+
+    return;
+
+  }
+
+  if (!data || data.length === 0) {
+
+    list.innerHTML =
+      '<div class="small">這一期還沒有設定獎品</div>';
+
+    return;
+
+  }
+
+  list.innerHTML = '';
+
+  data.forEach(item => {
+
+    const box =
+      document.createElement('div');
+
+    box.style.background = '#f3f3f3';
+    box.style.borderRadius = '12px';
+    box.style.padding = '12px';
+    box.style.marginBottom = '10px';
+
+    box.innerHTML = `
+      <div style="font-weight:bold;">
+        🎁 ${escapeHtmlAdmin(item.name)}
+      </div>
+
+      <div class="small" style="margin-top:6px;">
+        數量：${item.quantity}<br>
+        ${item.requires_redemption
+          ? '✅ 需要領取 / 兌領'
+          : 'ℹ️ 無需領取'}
+      </div>
+    `;
+
+    list.appendChild(box);
+
+  });
+
+}
+
+async function addPrize() {
+
+  const campaignId =
+    document.getElementById('prizeCampaignSelect')
+      .value;
+
+  const name =
+    document.getElementById('prizeName')
+      .value.trim();
+
+  const quantity =
+    Number(
+      document.getElementById('prizeQuantity')
+        .value
+    );
+
+  const requiresRedemption =
+    document.getElementById('prizeRequiresRedemption')
+      .checked;
+
+  const status =
+    document.getElementById('prizeStatus');
+
+
+  if (!campaignId) {
+
+    status.innerText =
+      '請先選擇活動';
+
+    return;
+
+  }
+
+
+  if (!name) {
+
+    status.innerText =
+      '請輸入獎品名稱';
+
+    return;
+
+  }
+
+
+  if (!Number.isInteger(quantity) || quantity <= 0) {
+
+    status.innerText =
+      '獎品數量必須是大於 0 的整數';
+
+    return;
+
+  }
+
+
+  status.innerText =
+    '新增中...';
+
+
+  const { error } =
+    await db.rpc(
+      'admin_add_prize',
+      {
+        p_campaign_id: campaignId,
+        p_name: name,
+        p_quantity: quantity,
+        p_requires_redemption: requiresRedemption
+      }
+    );
+
+
+  if (error) {
+
+    console.error(error);
+
+    status.innerText =
+      '新增失敗：' + error.message;
+
+    return;
+
+  }
+
+
+  status.innerText =
+    '✅ 新增成功';
+
+
+  document.getElementById('prizeName')
+    .value = '';
+
+  document.getElementById('prizeQuantity')
+    .value = '';
+
+  document.getElementById('prizeRequiresRedemption')
+    .checked = true;
+
+
+  await loadCampaignPrizes(campaignId);
+
+}
 
 async function loadCampaigns() {
 
