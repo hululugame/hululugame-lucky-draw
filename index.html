@@ -382,7 +382,13 @@ let remainingDraws = 0;
 
     list.innerHTML = '';
 
-    data.forEach(prize => {
+if (!data || data.length === 0) {
+  list.innerHTML =
+    '<div class="small">目前沒有進行中的活動獎品</div>';
+  return;
+}
+
+data.forEach(prize => {
 
       const row =
         document.createElement('div');
