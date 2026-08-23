@@ -218,9 +218,16 @@
 
   <h2>➕ 幫會員增加抽數</h2>
 
-  <div id="memberList">
-    載入會員中...
-  </div>
+<input
+  id="memberSearch"
+  class="input"
+  placeholder="搜尋暱稱或 Email"
+  oninput="filterMembers()"
+>
+
+<div id="memberList">
+  載入會員中...
+</div>
 
 </div>
 
@@ -712,6 +719,43 @@ async function addCustomMemberDraws(
 
 
   input.value = '';
+
+}
+
+let allMembers = [];
+
+
+function filterMembers() {
+
+  const keyword =
+    document.getElementById('memberSearch')
+      .value.trim()
+      .toLowerCase();
+
+  if (!keyword) {
+    renderMembers(allMembers);
+    return;
+  }
+
+  const filtered =
+    allMembers.filter(member => {
+
+      const name =
+        (member.display_name || '')
+          .toLowerCase();
+
+      const email =
+        (member.email || '')
+          .toLowerCase();
+
+      return (
+        name.includes(keyword) ||
+        email.includes(keyword)
+      );
+
+    });
+
+  renderMembers(filtered);
 
 }
 
