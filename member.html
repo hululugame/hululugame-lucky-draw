@@ -254,6 +254,13 @@
 
 </div>
 
+<div style="margin-top:22px;">
+  <h3>🎁 我的獎品</h3>
+  <div id="myPrizeList" class="small">
+    載入中...
+  </div>
+</div>
+
       <input
         id="displayName"
         class="input"
@@ -491,6 +498,8 @@
       await loadProfile();
 
       await loadDrawStatus();
+      
+      await loadMyPrizes();
 
     }
 
@@ -685,6 +694,101 @@ async function redeemCode() {
 
 
   await loadDrawStatus();
+
+}
+async function loadMyPrizes() {
+
+  const list =
+    document.getElementById('myPrizeList');
+
+  if (!list) return;
+
+  list.innerHTML = '載入中...';
+
+  const { data, error } =
+    await db.rpc('get_my_draw_results');
+
+  if (error) {
+    console.error(error);
+    list.innerHTML = '讀取失敗：' + error.message;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    list.innerHTML = '目前還沒有抽獎紀錄';
+    return;
+  }
+
+  list.innerHTML = '';
+
+  data.forEach(item => {
+
+    const box = document.createElement('div');
+
+    box.style.background = '#f3f3f3';
+    box.style.borderRadius = '12px';
+    box.style.padding = '14px';
+    box.style.marginBottom = '12px';
+
+    const drawnTime =
+      item.drawn_at
+        ? new Date(item.drawn_at).toLocaleString()
+        : '';
+
+    const redeemedTime =
+      item.redeemed_at
+        ? new Date(item.redeemed_at).toLocaleString()
+        : '';
+
+    let statusHtml = '';
+
+    if (!item.requires_redemption) {
+
+      statusHtml = `
+        <div style="margin-top:8px;font-weight:bold;">
+          ✅ 無需領取
+        </div>
+      `;
+
+    } else if (item.redeemed) {
+
+      statusHtml = `
+        <div style="margin-top:8px;font-weight:bold;">
+          ✅ 已領取
+        </div>
+
+        <div class="small">
+          領取時間：${redeemedTime}
+        </div>
+      `;
+
+    } else {
+
+      statusHtml = `
+        <div style="margin-top:8px;font-weight:bold;color:#e63946;">
+          ⏳ 待領取
+        </div>
+      `;
+
+    }
+
+    box.innerHTML = `
+      <div style="font-weight:bold;font-size:17px;">
+        🎁 ${item.prize_name}
+      </div>
+
+      <div class="small" style="margin-top:7px;line-height:1.8;">
+        🎪 ${item.campaign_title}<br>
+        🧧 第 ${item.slot_number} 格<br>
+        🕐 ${drawnTime}
+      </div>
+
+      ${statusHtml}
+    `;
+
+    list.appendChild(box);
+
+  });
 
 }
 
