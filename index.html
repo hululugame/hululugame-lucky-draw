@@ -6,10 +6,10 @@
 
   <title>hululugame 抽抽樂</title>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -34,7 +34,6 @@
 
     .header p {
       margin: 8px 0 0;
-      opacity: 0.95;
     }
 
     .container {
@@ -48,7 +47,7 @@
       border-radius: 18px;
       padding: 18px;
       margin-bottom: 16px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 15px rgba(0,0,0,.08);
     }
 
     .campaign-title {
@@ -67,20 +66,14 @@
 
     .prizes h2 {
       margin-top: 0;
-      font-size: 20px;
     }
 
     .prize-row {
       display: flex;
       justify-content: space-between;
+      gap: 10px;
       border-bottom: 1px dashed #ddd;
       padding: 10px 0;
-    }
-
-    .login-title {
-      font-weight: bold;
-      font-size: 18px;
-      margin-bottom: 10px;
     }
 
     .input {
@@ -95,9 +88,9 @@
 
     .button {
       width: 100%;
+      height: 48px;
       border: none;
       border-radius: 12px;
-      height: 48px;
       background: #e63946;
       color: white;
       font-size: 17px;
@@ -124,23 +117,22 @@
     }
 
     .slot {
-      aspect-ratio: 1 / 1;
+      aspect-ratio: 1;
       border: 3px solid #ffc300;
       background: #e63946;
       color: white;
       border-radius: 13px;
-      font-size: 18px;
+      font-size: 17px;
       font-weight: bold;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
       box-shadow: 0 4px 0 #a51d28;
     }
 
     .slot span {
-      font-size: 25px;
+      font-size: 24px;
     }
 
     .slot.drawn {
@@ -152,34 +144,29 @@
 
     .notice {
       text-align: center;
-      font-size: 14px;
       color: #777;
-      line-height: 1.6;
+      line-height: 1.7;
+      font-size: 14px;
     }
 
     .result-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0,0,0,.72);
       align-items: center;
       justify-content: center;
       padding: 25px;
-      z-index: 1000;
+      z-index: 999;
     }
 
     .result-box {
+      background: white;
       width: 100%;
       max-width: 400px;
-      background: white;
       border-radius: 22px;
       padding: 28px 20px;
       text-align: center;
-    }
-
-    .result-box h2 {
-      color: #e63946;
-      font-size: 28px;
     }
 
     .result-prize {
@@ -188,226 +175,432 @@
       margin: 22px 0;
     }
 
-    .close-button {
-      width: 100%;
-      height: 48px;
-      border: none;
-      border-radius: 12px;
-      background: #e63946;
-      color: white;
-      font-size: 17px;
-      font-weight: bold;
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #777;
     }
   </style>
 </head>
 
-
 <body>
 
-  <header class="header">
-    <h1>🎪 hululugame 抽抽樂</h1>
-    <p>消費享抽獎機會・好禮等你帶回家</p>
-  </header>
+<header class="header">
+  <h1>🎪 hululugame 抽抽樂</h1>
+  <p>消費享抽獎機會・好禮等你帶回家</p>
+</header>
 
+<main class="container">
 
-  <main class="container">
-
-    <section class="card">
-      <div class="campaign-title">
-        🎉 2026年8月抽抽樂
-      </div>
-
-      <div class="remaining">
-        剩餘 19 / 20 格
-      </div>
-    </section>
-
-
-    <section class="card prizes">
-
-      <h2>🎁 本期獎品</h2>
-
-      <div class="prize-row">
-        <span>📱 iPhone 頭獎</span>
-        <strong>× 1</strong>
-      </div>
-
-      <div class="prize-row">
-        <span>🎟️ 9折券</span>
-        <strong>× 2</strong>
-      </div>
-
-      <div class="prize-row">
-        <span>🎫 95折券</span>
-        <strong>× 5</strong>
-      </div>
-
-      <div class="prize-row">
-        <span>💰 $100 儲值金</span>
-        <strong>× 4</strong>
-      </div>
-
-    </section>
-
-
-    <section class="card">
-
-      <div class="login-title">
-        🎫 輸入你的抽獎碼
-      </div>
-
-      <input
-        id="accessCode"
-        class="input"
-        placeholder="例如：TEST001"
-      >
-
-      <button class="button" onclick="checkCode()">
-        查詢我的抽獎次數
-      </button>
-
-      <div id="drawInfo" class="draw-info">
-        尚未輸入抽獎碼
-      </div>
-
-    </section>
-
-
-    <section class="card">
-
-      <div class="board-title">
-        🧧 選一格抽抽樂
-      </div>
-
-      <div id="board" class="board"></div>
-
-    </section>
-
-
-    <section class="card notice">
-
-      消費滿指定金額即可獲得抽獎機會。<br>
-      每一格只能被抽取一次。<br>
-      實際獎品與領獎方式以活動公告為準。
-
-    </section>
-
-  </main>
-
-
-  <div id="resultOverlay" class="result-overlay">
-
-    <div class="result-box">
-
-      <div style="font-size:50px;">🎉</div>
-
-      <h2>恭喜你抽中了</h2>
-
-      <div id="resultPrize" class="result-prize">
-        95折券
-      </div>
-
-      <button class="close-button" onclick="closeResult()">
-        收下獎品
-      </button>
-
+  <section class="card">
+    <div id="campaignTitle" class="campaign-title">
+      載入活動中...
     </div>
 
+    <div id="remaining" class="remaining">
+      載入中...
+    </div>
+  </section>
+
+
+  <section class="card prizes">
+    <h2>🎁 本期獎品</h2>
+
+    <div id="prizeList">
+      <div class="loading">載入獎品中...</div>
+    </div>
+  </section>
+
+
+  <section class="card">
+
+    <div style="font-weight:bold;font-size:18px;margin-bottom:10px;">
+      🎫 輸入你的抽獎碼
+    </div>
+
+    <input
+      id="accessCode"
+      class="input"
+      placeholder="例如：TEST001"
+      autocomplete="off"
+    >
+
+    <button class="button" onclick="checkCode()">
+      查詢我的抽獎次數
+    </button>
+
+    <div id="drawInfo" class="draw-info">
+      尚未輸入抽獎碼
+    </div>
+
+  </section>
+
+
+  <section class="card">
+
+    <div class="board-title">
+      🧧 選一格抽抽樂
+    </div>
+
+    <div id="board" class="board">
+      <div class="loading">載入格子中...</div>
+    </div>
+
+  </section>
+
+
+  <section class="card notice">
+    消費滿指定金額即可獲得抽獎機會。<br>
+    每一格只能被抽取一次。<br>
+    實際獎品與領獎方式以活動公告為準。
+  </section>
+
+</main>
+
+
+<div id="resultOverlay" class="result-overlay">
+  <div class="result-box">
+
+    <div style="font-size:50px;">🎉</div>
+
+    <h2>你的抽獎結果</h2>
+
+    <div id="resultPrize" class="result-prize"></div>
+
+    <div id="resultRemaining"
+         style="margin-bottom:20px;font-weight:bold;">
+    </div>
+
+    <button class="button" onclick="closeResult()">
+      收下獎品
+    </button>
+
   </div>
+</div>
 
 
-  <script>
+<script>
 
-    const board = document.getElementById("board");
+  // =============================================
+  // 把你剛剛複製的兩個資料貼在這裡
+  // =============================================
 
-    for (let i = 1; i <= 20; i++) {
+  const SUPABASE_URL =
+    'https://rhssnydqgdlkaxwrwwlp.supabase.co/rest/v1/';
 
-      const slot = document.createElement("div");
+  const SUPABASE_KEY =
+    'sb_publishable_KN1SvNhpJtxfTg-Lz_D16w_6L41j_wW';
 
-      slot.className = "slot";
 
-      slot.innerHTML = `
-        <span>🧧</span>
-        ${String(i).padStart(2, "0")}
+  const db = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+  let currentAccessCode = '';
+  let remainingDraws = 0;
+
+
+  async function loadCampaign() {
+
+    const { data, error } =
+      await db.rpc('get_public_campaign');
+
+    if (error) {
+      console.error(error);
+      document.getElementById('campaignTitle').innerText =
+        '活動讀取失敗';
+      return;
+    }
+
+    if (!data) return;
+
+    document.getElementById('campaignTitle').innerText =
+      '🎉 ' + data.title;
+
+    document.getElementById('remaining').innerText =
+      `剩餘 ${data.remaining_slots} / ${data.total_slots} 格`;
+
+  }
+
+
+  async function loadPrizes() {
+
+    const { data, error } =
+      await db.rpc('get_public_prizes');
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    const list =
+      document.getElementById('prizeList');
+
+    list.innerHTML = '';
+
+    data.forEach(prize => {
+
+      const row =
+        document.createElement('div');
+
+      row.className = 'prize-row';
+
+      row.innerHTML = `
+        <span>🎁 ${escapeHtml(prize.prize_name)}</span>
+        <strong>
+          剩 ${prize.remaining_quantity}
+          / ${prize.total_quantity}
+        </strong>
       `;
 
-      if (i === 1) {
+      list.appendChild(row);
 
-        slot.classList.add("drawn");
+    });
+
+  }
+
+
+  async function loadSlots() {
+
+    const { data, error } =
+      await db.rpc('get_public_slots');
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    const board =
+      document.getElementById('board');
+
+    board.innerHTML = '';
+
+    data.forEach(item => {
+
+      const slot =
+        document.createElement('div');
+
+      slot.className =
+        item.is_drawn
+          ? 'slot drawn'
+          : 'slot';
+
+      if (item.is_drawn) {
 
         slot.innerHTML = `
           <span>✓</span>
-          01 已抽
+          ${String(item.slot_number).padStart(2,'0')}
+          已抽
         `;
 
-      }
+      } else {
 
-      slot.onclick = function () {
-        demoDraw(i);
-      };
+        slot.innerHTML = `
+          <span>🧧</span>
+          ${String(item.slot_number).padStart(2,'0')}
+        `;
+
+        slot.onclick = () =>
+          drawSlot(item.slot_number);
+
+      }
 
       board.appendChild(slot);
 
+    });
+
+  }
+
+
+  async function checkCode() {
+
+    const code =
+      document.getElementById('accessCode')
+        .value.trim();
+
+    if (!code) {
+      alert('請先輸入抽獎碼');
+      return;
+    }
+
+    const { data, error } =
+      await db.rpc(
+        'check_draw_code',
+        {
+          p_access_code: code
+        }
+      );
+
+    if (error) {
+      console.error(error);
+      alert('查詢失敗，請稍後再試');
+      return;
+    }
+
+    if (!data || data.length === 0) {
+
+      currentAccessCode = '';
+      remainingDraws = 0;
+
+      document.getElementById('drawInfo').innerText =
+        '❌ 找不到這個抽獎碼';
+
+      return;
+    }
+
+    currentAccessCode = code;
+    remainingDraws =
+      data[0].remaining_draws;
+
+    document.getElementById('drawInfo').innerHTML =
+      `🎟️ ${escapeHtml(data[0].display_name || '客人')}
+       目前剩餘
+       <strong>${remainingDraws} 次</strong>
+       抽獎機會`;
+
+  }
+
+
+  async function drawSlot(slotNumber) {
+
+    if (!currentAccessCode) {
+
+      alert('請先輸入抽獎碼並查詢抽獎次數');
+
+      return;
+
+    }
+
+    if (remainingDraws <= 0) {
+
+      alert('你的抽獎次數已用完');
+
+      return;
+
+    }
+
+    const ok =
+      confirm(
+        `確定要抽第 ${slotNumber} 格嗎？`
+      );
+
+    if (!ok) return;
+
+
+    const { data, error } =
+      await db.rpc(
+        'draw_slot',
+        {
+          p_access_code:
+            currentAccessCode,
+
+          p_slot_number:
+            slotNumber
+        }
+      );
+
+
+    if (error) {
+
+      console.error(error);
+
+      alert(
+        error.message ||
+        '抽獎失敗，請重新整理後再試'
+      );
+
+      await refreshAll();
+
+      return;
     }
 
 
-    function checkCode() {
-
-      const code =
-        document.getElementById("accessCode").value.trim();
-
-      if (!code) {
-
-        alert("請先輸入抽獎碼");
-
-        return;
-
-      }
-
-      document.getElementById("drawInfo").innerHTML =
-        "🎟️ 目前剩餘 <strong>2 次</strong>抽獎機會";
-
-    }
+    if (!data || data.length === 0)
+      return;
 
 
-    function demoDraw(slotNumber) {
+    const result = data[0];
 
-      const code =
-        document.getElementById("accessCode").value.trim();
-
-      if (!code) {
-
-        alert("請先輸入抽獎碼");
-
-        return;
-
-      }
-
-      if (slotNumber === 1) {
-
-        alert("這一格已經被抽走囉！");
-
-        return;
-
-      }
-
-      document.getElementById("resultPrize").innerText =
-        "🎁 測試獎品";
-
-      document.getElementById("resultOverlay").style.display =
-        "flex";
-
-    }
+    remainingDraws =
+      result.remaining_draws;
 
 
-    function closeResult() {
+    document.getElementById(
+      'resultPrize'
+    ).innerText =
+      '🎁 ' + result.prize_name;
 
-      document.getElementById("resultOverlay").style.display =
-        "none";
 
-    }
+    document.getElementById(
+      'resultRemaining'
+    ).innerText =
+      `剩餘抽獎次數：${remainingDraws} 次`;
 
-  </script>
+
+    document.getElementById(
+      'resultOverlay'
+    ).style.display = 'flex';
+
+
+    document.getElementById(
+      'drawInfo'
+    ).innerHTML =
+      `🎟️ 目前剩餘
+       <strong>${remainingDraws} 次</strong>
+       抽獎機會`;
+
+
+    await refreshAll();
+
+  }
+
+
+  function closeResult() {
+
+    document.getElementById(
+      'resultOverlay'
+    ).style.display = 'none';
+
+  }
+
+
+  async function refreshAll() {
+
+    await Promise.all([
+      loadCampaign(),
+      loadPrizes(),
+      loadSlots()
+    ]);
+
+  }
+
+
+  function escapeHtml(text) {
+
+    const div =
+      document.createElement('div');
+
+    div.textContent =
+      text ?? '';
+
+    return div.innerHTML;
+
+  }
+
+
+  refreshAll();
+
+
+  // 每 15 秒更新一次
+  // 這樣其他客人抽過的格子會自動刷新
+  setInterval(
+    refreshAll,
+    15000
+  );
+
+</script>
 
 </body>
 </html>
