@@ -883,7 +883,7 @@ async function loadCampaigns() {
   list.innerHTML = '載入中...';
 
   const { data, error } =
-    await db.rpc('admin_get_campaigns');
+    await db.rpc('admin_get_visible_campaigns');
 
   if (error) {
 
