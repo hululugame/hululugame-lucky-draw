@@ -159,6 +159,10 @@
   ➕ 幫客人增加抽數
 </button>
 
+<button class="button" onclick="openDrawBalanceManager()">
+  📒 抽數異動紀錄
+</button>
+
       <button class="menu-button" onclick="openDrawResultsManager()">
   🏆 查看中獎紀錄
 </button>
@@ -376,6 +380,34 @@
 
 <div id="drawResultsManager" class="hidden" style="margin-top:20px;">
 
+<div id="drawBalanceManager" class="hidden" style="margin-top:20px;">
+
+  <hr style="border:none;border-top:1px solid #ddd;margin:20px 0;">
+
+  <h2>📒 抽數異動紀錄</h2>
+
+  <select
+  id="drawBalanceCampaign"
+  class="input"
+  onchange="loadDrawBalanceLogs()"
+>
+    <option value="">
+      請選擇活動
+    </option>
+  </select>
+
+  <input
+    id="drawBalanceSearch"
+    class="input"
+    placeholder="搜尋暱稱、Email"
+  >
+
+  <div id="drawBalanceList">
+    請先選擇活動
+  </div>
+
+</div>
+
   <hr style="border:none;border-top:1px solid #ddd;margin:20px 0;">
 
   <h2>🏆 中獎紀錄</h2>
@@ -516,6 +548,171 @@ showAdmin(data.user);
 
   document.getElementById('drawResultsManager')
     .classList.add('hidden');
+    
+    document.getElementById('drawBalanceManager')
+  .classList.add('hidden');
+
+}
+
+async function openDrawBalanceManager() {
+
+  const box =
+    document.getElementById('drawBalanceManager');
+
+  const wasHidden =
+    box.classList.contains('hidden');
+
+  closeAllManagers();
+
+  if (wasHidden) {
+
+    box.classList.remove('hidden');
+
+    await loadDrawBalanceCampaigns();
+
+  }
+
+}
+
+async function loadDrawBalanceCampaigns() {
+
+  const select =
+    document.getElementById('drawBalanceCampaign');
+
+  select.innerHTML = `
+    <option value="">
+      請選擇活動
+    </option>
+  `;
+
+  const { data, error } =
+    await db.rpc(
+      'admin_get_campaigns'
+    );
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  (data || []).forEach(item => {
+
+    const option =
+      document.createElement('option');
+
+    option.value = item.id;
+
+    option.textContent =
+      `${item.title} ${
+        item.status === 'ended'
+          ? '（已結束）'
+          : item.status === 'active'
+            ? '（進行中／已排程）'
+            : '（草稿）'
+      }`;
+
+    select.appendChild(option);
+
+  });
+
+}
+
+async function loadDrawBalanceLogs() {
+
+  const campaignId =
+    document.getElementById('drawBalanceCampaign')
+      .value;
+
+  const list =
+    document.getElementById('drawBalanceList');
+
+  if (!campaignId) {
+    list.innerHTML =
+      '請先選擇活動';
+    return;
+  }
+
+  list.innerHTML =
+    '載入中...';
+
+  const { data, error } =
+    await db.rpc(
+      'admin_get_draw_balance_logs',
+      {
+        p_campaign_id: campaignId
+      }
+    );
+
+  if (error) {
+    console.error(error);
+
+    list.innerHTML =
+      '讀取失敗：' + error.message;
+
+    return;
+  }
+
+  if (!data || data.length === 0) {
+
+    list.innerHTML =
+      '這一期目前沒有抽數異動紀錄';
+
+    return;
+  }
+
+  list.innerHTML = '';
+
+  data.forEach(item => {
+
+    const box =
+      document.createElement('div');
+
+    box.className = 'card';
+
+    const time =
+      new Date(item.created_at)
+        .toLocaleString(
+          'zh-TW',
+          { hour12: false }
+        );
+
+    let typeText =
+      item.change_type;
+
+    if (item.change_type === 'admin_add') {
+      typeText = '管理員加抽';
+    }
+
+    if (item.change_type === 'redeem_code') {
+      typeText = '兌換碼';
+    }
+
+    if (item.change_type === 'draw') {
+      typeText = '會員抽獎';
+    }
+
+    const amountText =
+      item.change_amount > 0
+        ? `+${item.change_amount}`
+        : `${item.change_amount}`;
+
+    box.innerHTML = `
+      <div style="font-weight:bold;">
+        ${escapeHtmlAdmin(item.display_name || '未設定暱稱')}
+      </div>
+
+      <div class="small" style="margin-top:6px;">
+        ${escapeHtmlAdmin(item.email || '')}<br>
+        異動：${amountText} 抽<br>
+        原因：${escapeHtmlAdmin(typeText)}<br>
+        備註：${escapeHtmlAdmin(item.note || '')}<br>
+        時間：${escapeHtmlAdmin(time)}
+      </div>
+    `;
+
+    list.appendChild(box);
+
+  });
 
 }
 
