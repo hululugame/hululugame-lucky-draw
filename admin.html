@@ -536,23 +536,25 @@ showAdmin(data.user);
     
     function closeAllManagers() {
 
-  document.getElementById('campaignManager')
-    .classList.add('hidden');
+  const managerIds = [
+    'campaignManager',
+    'prizeManager',
+    'memberDrawManager',
+    'redemptionManager',
+    'drawBalanceManager',
+    'drawResultsManager'
+  ];
 
-  document.getElementById('prizeManager')
-    .classList.add('hidden');
+  managerIds.forEach(id => {
 
-  document.getElementById('memberDrawManager')
-    .classList.add('hidden');
+    const el =
+      document.getElementById(id);
 
-  document.getElementById('redemptionManager')
-    .classList.add('hidden');
+    if (el) {
+      el.classList.add('hidden');
+    }
 
-  document.getElementById('drawResultsManager')
-    .classList.add('hidden');
-    
-    document.getElementById('drawBalanceManager')
-  .classList.add('hidden');
+  });
 
 }
 
