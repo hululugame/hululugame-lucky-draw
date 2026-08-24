@@ -1031,6 +1031,14 @@ box.innerHTML = `
   ${publishButton}
   ${settingsHtml}
 
+<button
+  class="button secondary"
+  style="margin-top:10px;"
+  onclick="archiveCampaign('${item.id}')"
+>
+  📦 封存活動
+</button>
+
   <button
     class="button secondary"
     style="margin-top:10px;"
@@ -1206,6 +1214,43 @@ async function publishCampaign(campaignId) {
 
 
   alert('✅ 活動已正式發布');
+
+  await loadCampaigns();
+
+}
+
+async function archiveCampaign(campaignId) {
+
+  const ok = confirm(
+    '確定要封存這一期活動嗎？\n\n封存後會從主要活動清單隱藏，但中獎與領獎紀錄都會保留。'
+  );
+
+  if (!ok) return;
+
+
+  const { error } =
+    await db.rpc(
+      'admin_archive_campaign',
+      {
+        p_campaign_id: campaignId
+      }
+    );
+
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      '封存失敗：' + error.message
+    );
+
+    return;
+
+  }
+
+
+  alert('✅ 活動已封存');
 
   await loadCampaigns();
 
