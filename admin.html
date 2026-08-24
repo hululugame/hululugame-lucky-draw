@@ -914,21 +914,63 @@ async function loadCampaigns() {
     box.style.padding = '14px';
     box.style.marginBottom = '10px';
 
-    const publishButton = item.status === 'active'
-  ? `
-      <div style="margin-top:10px;font-weight:bold;">
-        ✅ 目前正式活動
-      </div>
-    `
-  : `
-      <button
-        class="button"
-        style="margin-top:10px;"
-        onclick="publishCampaign('${item.id}')"
-      >
-        🚀 發布活動
-      </button>
-    `;
+    let publishButton = '';
+
+const now = new Date();
+const startAt = item.start_at
+  ? new Date(item.start_at)
+  : null;
+
+const endAt = item.end_at
+  ? new Date(item.end_at)
+  : null;
+
+
+if (item.status === 'ended') {
+
+  publishButton = `
+    <div style="margin-top:10px;font-weight:bold;">
+      ⛔ 已結束
+    </div>
+  `;
+
+} else if (
+  item.status === 'active' &&
+  startAt &&
+  startAt > now
+) {
+
+  publishButton = `
+    <div style="margin-top:10px;font-weight:bold;">
+      🕒 已排程，尚未開始
+    </div>
+  `;
+
+} else if (
+  item.status === 'active' &&
+  (!startAt || startAt <= now) &&
+  (!endAt || endAt > now)
+) {
+
+  publishButton = `
+    <div style="margin-top:10px;font-weight:bold;">
+      ✅ 目前進行中
+    </div>
+  `;
+
+} else {
+
+  publishButton = `
+    <button
+      class="button"
+      style="margin-top:10px;"
+      onclick="publishCampaign('${item.id}')"
+    >
+      🚀 發布活動
+    </button>
+  `;
+
+}
     
     const settingsHtml = `
   <div style="margin-top:12px;">
