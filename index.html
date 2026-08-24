@@ -204,6 +204,13 @@
     <div id="remaining" class="remaining">
       載入中...
     </div>
+    
+    <div
+  id="campaignRules"
+  class="small"
+  style="margin-top:10px;line-height:1.8;"
+></div>
+
   </section>
 
 
@@ -364,6 +371,34 @@ let remainingDraws = 0;
     document.getElementById('remaining').innerText =
       `剩餘 ${data.remaining_slots} / ${data.total_slots} 格`;
 
+const startText =
+  data.start_at
+    ? new Date(data.start_at).toLocaleString(
+        'zh-TW',
+        { hour12: false }
+      )
+    : '未設定';
+
+const endText =
+  data.end_at
+    ? new Date(data.end_at).toLocaleString(
+        'zh-TW',
+        { hour12: false }
+      )
+    : '未設定';
+
+let ruleText =
+  `活動期間：${startText} ～ ${endText}\n` +
+  `每消費 ${data.spend_per_draw} 元可獲得 1 抽`;
+
+if (data.end_when_jackpot_drawn) {
+  ruleText +=
+    '\n⭐ 頭獎抽出後，本期活動將提前結束';
+}
+
+document.getElementById('campaignRules').innerText =
+  ruleText;
+  
   }
 
 
