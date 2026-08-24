@@ -1682,7 +1682,7 @@ async function loadRedemptionCodes() {
 
 
   const { data, error } =
-    await db.rpc('admin_get_redemption_codes');
+    await db.rpc('admin_get_visible_redemption_codes');
 
 
   if (error) {
@@ -1737,22 +1737,144 @@ async function loadRedemptionCodes() {
 
 
     box.innerHTML = `
-      <div style="font-weight:bold;font-size:18px;">
-        🎟️ ${escapeHtmlAdmin(item.code)}
-      </div>
+  <div style="font-weight:bold;font-size:18px;">
+    🎟️ ${escapeHtmlAdmin(item.code)}
+  </div>
 
-      <div class="small" style="margin-top:6px;">
-        ${escapeHtmlAdmin(item.title || '')}<br>
-        可兌換：${item.draws} 抽<br>
-        已兌換：${item.current_redemptions} / ${maxText}<br>
-        到期：${escapeHtmlAdmin(endText)}<br>
-        狀態：${item.is_active ? '啟用中' : '已停用'}
-      </div>
-    `;
+  <div class="small" style="margin-top:6px;">
+    ${escapeHtmlAdmin(item.title || '')}<br>
+    可兌換：${item.draws} 抽<br>
+    已兌換：${item.current_redemptions} / ${maxText}<br>
+    到期：${escapeHtmlAdmin(endText)}<br>
+    狀態：${item.is_active ? '啟用中' : '已停用'}
+  </div>
+
+  <button
+    class="button secondary"
+    style="margin-top:10px;"
+    onclick="toggleRedemptionCode('${item.id}', ${item.is_active ? 'false' : 'true'})"
+  >
+    ${item.is_active ? '⏸️ 停用' : '▶️ 啟用'}
+  </button>
+
+  <button
+    class="button secondary"
+    style="margin-top:10px;"
+    onclick="archiveRedemptionCode('${item.id}')"
+  >
+    📦 封存
+  </button>
+
+  <button
+    class="button secondary"
+    style="margin-top:10px;"
+    onclick="deleteRedemptionCode('${item.id}')"
+  >
+    🗑️ 刪除
+  </button>
+`;
 
     list.appendChild(box);
 
   });
+
+}
+
+async function toggleRedemptionCode(
+  codeId,
+  isActive
+) {
+
+  const { error } =
+    await db.rpc(
+      'admin_toggle_redemption_code',
+      {
+        p_code_id: codeId,
+        p_is_active: isActive
+      }
+    );
+
+  if (error) {
+    console.error(error);
+    alert(
+      '操作失敗：' + error.message
+    );
+    return;
+  }
+
+  alert(
+    isActive
+      ? '✅ 兌換碼已啟用'
+      : '⏸️ 兌換碼已停用'
+  );
+
+  await loadRedemptionCodes();
+
+}
+
+
+async function archiveRedemptionCode(
+  codeId
+) {
+
+  const ok = confirm(
+    '確定要封存這組兌換碼嗎？\n\n封存後會從主要清單隱藏，而且不能再兌換。'
+  );
+
+  if (!ok) return;
+
+  const { error } =
+    await db.rpc(
+      'admin_archive_redemption_code',
+      {
+        p_code_id: codeId
+      }
+    );
+
+  if (error) {
+    console.error(error);
+    alert(
+      '封存失敗：' + error.message
+    );
+    return;
+  }
+
+  alert('✅ 兌換碼已封存');
+
+  await loadRedemptionCodes();
+
+}
+
+
+async function deleteRedemptionCode(
+  codeId
+) {
+
+  const ok = confirm(
+    '確定要刪除這組兌換碼嗎？\n\n如果已經有人兌換過，系統會禁止刪除。'
+  );
+
+  if (!ok) return;
+
+  const { error } =
+    await db.rpc(
+      'admin_delete_redemption_code',
+      {
+        p_code_id: codeId
+      }
+    );
+
+  if (error) {
+    console.error(error);
+    alert(
+      '刪除失敗：' + error.message
+    );
+    return;
+  }
+
+  alert('✅ 兌換碼已刪除');
+
+  await loadRedemptionCodes();
 
 }
 
