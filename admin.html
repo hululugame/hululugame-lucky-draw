@@ -518,6 +518,9 @@ closeAllManagers();
 
 if (wasHidden) {
   campaignBox.classList.remove('hidden');
+
+  await db.rpc('admin_sync_campaign_statuses');
+
   await loadCampaigns();
 }
 
