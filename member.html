@@ -721,6 +721,10 @@ async function redeemCode() {
   await loadDrawStatus();
 
 }
+
+let allMyPrizes = [];
+let showAllMyPrizes = false;
+
 async function loadMyPrizes() {
 
   const list =
@@ -739,21 +743,40 @@ async function loadMyPrizes() {
     return;
   }
 
-  const prizes =
-  (data || []).filter(
-    item => item.requires_redemption
-  );
+  allMyPrizes =
+    (data || []).filter(
+      item => item.requires_redemption
+    );
 
-if (prizes.length === 0) {
-  list.innerHTML = '目前還沒有中獎品';
-  return;
+  renderMyPrizes();
+
 }
 
-list.innerHTML = '';
 
-prizes.forEach(item => {
+function renderMyPrizes() {
 
-    const box = document.createElement('div');
+  const list =
+    document.getElementById('myPrizeList');
+
+  if (!list) return;
+
+  if (allMyPrizes.length === 0) {
+    list.innerHTML = '目前還沒有中獎品';
+    return;
+  }
+
+  list.innerHTML = '';
+
+  const prizesToShow =
+    showAllMyPrizes
+      ? allMyPrizes
+      : allMyPrizes.slice(0, 3);
+
+
+  prizesToShow.forEach(item => {
+
+    const box =
+      document.createElement('div');
 
     box.style.background = '#f3f3f3';
     box.style.borderRadius = '12px';
@@ -772,15 +795,7 @@ prizes.forEach(item => {
 
     let statusHtml = '';
 
-    if (!item.requires_redemption) {
-
-      statusHtml = `
-        <div style="margin-top:8px;font-weight:bold;">
-          ✅ 無需領取
-        </div>
-      `;
-
-    } else if (item.redeemed) {
+    if (item.redeemed) {
 
       statusHtml = `
         <div style="margin-top:8px;font-weight:bold;">
@@ -802,6 +817,7 @@ prizes.forEach(item => {
 
     }
 
+
     box.innerHTML = `
       <div style="font-weight:bold;font-size:17px;">
         🎁 ${item.prize_name}
@@ -819,6 +835,32 @@ prizes.forEach(item => {
     list.appendChild(box);
 
   });
+
+
+  if (allMyPrizes.length > 3) {
+
+    const toggleButton =
+      document.createElement('button');
+
+    toggleButton.className = 'button secondary';
+
+    toggleButton.innerText =
+      showAllMyPrizes
+        ? '收起獎品'
+        : `查看全部獎品（${allMyPrizes.length}）`;
+
+    toggleButton.onclick = () => {
+
+      showAllMyPrizes =
+        !showAllMyPrizes;
+
+      renderMyPrizes();
+
+    };
+
+    list.appendChild(toggleButton);
+
+  }
 
 }
 
