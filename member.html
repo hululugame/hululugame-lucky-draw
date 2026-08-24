@@ -309,6 +309,27 @@
   }
 );
 
+function getDeviceId() {
+
+  let deviceId =
+    localStorage.getItem('hululugame-device-id');
+
+  if (!deviceId) {
+
+    deviceId =
+      crypto.randomUUID();
+
+    localStorage.setItem(
+      'hululugame-device-id',
+      deviceId
+    );
+
+  }
+
+  return deviceId;
+
+}
+
 
     function showLogin() {
 
@@ -648,15 +669,19 @@ async function redeemCode() {
 
   status.innerText =
     '兌換中...';
+    
+    const deviceId =
+  getDeviceId();
 
 
   const { data, error } =
-    await db.rpc(
-      'redeem_draw_code',
-      {
-        p_code: code
-      }
-    );
+  await db.rpc(
+    'redeem_draw_code',
+    {
+      p_code: code,
+      p_device_id: deviceId
+    }
+  );
 
 
   if (error) {
