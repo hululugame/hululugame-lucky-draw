@@ -1594,7 +1594,10 @@ async function loadRedemptionCodes() {
 
     const endText =
       item.ends_at
-        ? new Date(item.ends_at).toLocaleString()
+        ? new Date(item.ends_at).toLocaleString(
+    'zh-TW',
+    { hour12: false }
+  )
         : '無期限';
 
 
