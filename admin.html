@@ -1030,6 +1030,14 @@ box.innerHTML = `
 
   ${publishButton}
   ${settingsHtml}
+
+  <button
+    class="button secondary"
+    style="margin-top:10px;"
+    onclick="deleteCampaign('${item.id}', '${escapeHtmlAdmin(item.title)}')"
+  >
+    🗑️ 刪除活動
+  </button>
 `;
 
     list.appendChild(box);
@@ -1198,6 +1206,43 @@ async function publishCampaign(campaignId) {
 
 
   alert('✅ 活動已正式發布');
+
+  await loadCampaigns();
+
+}
+
+async function deleteCampaign(campaignId) {
+
+  const ok = confirm(
+    '確定要刪除這一期活動嗎？\n\n如果這一期已經有人抽過，系統會自動禁止刪除。'
+  );
+
+  if (!ok) return;
+
+
+  const { error } =
+    await db.rpc(
+      'admin_delete_campaign',
+      {
+        p_campaign_id: campaignId
+      }
+    );
+
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      '刪除失敗：' + error.message
+    );
+
+    return;
+
+  }
+
+
+  alert('✅ 活動已刪除');
 
   await loadCampaigns();
 
