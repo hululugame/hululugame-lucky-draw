@@ -733,17 +733,65 @@ function filterDrawBalanceLogs() {
   const cards =
     list.querySelectorAll('.card');
 
+  let visibleCount = 0;
+
   cards.forEach(card => {
 
     const text =
       card.innerText.toLowerCase();
 
+    const matched =
+      text.includes(keyword);
+
     card.style.display =
-      text.includes(keyword)
-        ? ''
-        : 'none';
+      matched ? '' : 'none';
+
+    if (matched) {
+      visibleCount++;
+    }
 
   });
+
+  let emptyMessage =
+    document.getElementById(
+      'drawBalanceEmptyMessage'
+    );
+
+  if (!emptyMessage) {
+
+    emptyMessage =
+      document.createElement('div');
+
+    emptyMessage.id =
+      'drawBalanceEmptyMessage';
+
+    emptyMessage.className =
+      'small';
+
+    emptyMessage.style.marginTop =
+      '12px';
+
+    list.appendChild(emptyMessage);
+
+  }
+
+  if (
+    keyword &&
+    visibleCount === 0
+  ) {
+
+    emptyMessage.innerText =
+      '找不到符合的抽數異動紀錄';
+
+    emptyMessage.style.display =
+      '';
+
+  } else {
+
+    emptyMessage.style.display =
+      'none';
+
+  }
 
 }
 
