@@ -311,6 +311,19 @@
 
   <h2>🎟️ 兌換碼管理</h2>
 
+<div style="margin-bottom:10px;">
+  <label class="small">活動</label>
+
+  <select
+    id="redeemCampaign"
+    class="input"
+  >
+    <option value="">
+      請選擇活動
+    </option>
+  </select>
+</div>
+
   <input
     id="redeemCode"
     class="input"
@@ -1666,9 +1679,54 @@ async function openRedemptionManager() {
   closeAllManagers();
 
   if (wasHidden) {
-    redemptionBox.classList.remove('hidden');
-    await loadRedemptionCodes();
+  redemptionBox.classList.remove('hidden');
+
+  await loadRedemptionCampaigns();
+  await loadRedemptionCodes();
+}
+
+}
+
+async function loadRedemptionCampaigns() {
+
+  const select =
+    document.getElementById('redeemCampaign');
+
+  select.innerHTML = `
+    <option value="">
+      請選擇活動
+    </option>
+  `;
+
+  const { data, error } =
+    await db.rpc(
+      'admin_get_visible_campaigns'
+    );
+
+  if (error) {
+    console.error(error);
+    return;
   }
+
+  (data || []).forEach(item => {
+
+    const option =
+      document.createElement('option');
+
+    option.value = item.id;
+
+    option.textContent =
+      `${item.title} ${
+        item.status === 'active'
+          ? '（進行中／已排程）'
+          : item.status === 'ended'
+            ? '（已結束）'
+            : '（草稿）'
+      }`;
+
+    select.appendChild(option);
+
+  });
 
 }
 
