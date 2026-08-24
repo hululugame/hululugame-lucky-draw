@@ -1001,17 +1001,13 @@ const jackpotCheckbox =
 
 if (item.start_at && startInput) {
   startInput.value =
-    new Date(item.start_at)
-      .toISOString()
-      .slice(0, 16);
+    toLocalDateTimeInput(item.start_at);
 }
 
 
 if (item.end_at && endInput) {
   endInput.value =
-    new Date(item.end_at)
-      .toISOString()
-      .slice(0, 16);
+    toLocalDateTimeInput(item.end_at);
 }
 
 
@@ -1216,6 +1212,25 @@ async function saveCampaignSettings(campaignId) {
   alert('✅ 活動設定已儲存');
 
   await loadCampaigns();
+
+}
+
+function toLocalDateTimeInput(value) {
+
+  if (!value) return '';
+
+  const d =
+    new Date(value);
+
+  const local =
+    new Date(
+      d.getTime() -
+      d.getTimezoneOffset() * 60000
+    );
+
+  return local
+    .toISOString()
+    .slice(0, 16);
 
 }
 
