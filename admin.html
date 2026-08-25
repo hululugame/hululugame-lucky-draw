@@ -413,12 +413,40 @@
 
   <h2>🏆 中獎紀錄</h2>
 
-  <input
-    id="drawResultSearch"
-    class="input"
-    placeholder="搜尋暱稱、Email、獎品"
-    oninput="filterDrawResults()"
-  >
+<select
+  id="drawResultCampaign"
+  class="input"
+  onchange="filterDrawResults()"
+>
+  <option value="">
+    全部活動
+  </option>
+</select>
+
+<select
+  id="drawResultRedeemed"
+  class="input"
+  onchange="filterDrawResults()"
+>
+  <option value="">
+    全部領獎狀態
+  </option>
+
+  <option value="unredeemed">
+    未領獎
+  </option>
+
+  <option value="redeemed">
+    已領獎
+  </option>
+</select>
+
+<input
+  id="drawResultSearch"
+  class="input"
+  placeholder="搜尋暱稱、Email、獎品"
+  oninput="filterDrawResults()"
+>
 
   <div id="drawResultList">
     載入中...
@@ -2357,9 +2385,52 @@ async function openDrawResultsManager() {
   closeAllManagers();
 
   if (wasHidden) {
-    resultsBox.classList.remove('hidden');
-    await loadDrawResults();
+  resultsBox.classList.remove('hidden');
+
+  await loadDrawResultCampaigns();
+  await loadDrawResults();
+}
+
+}
+
+async function loadDrawResultCampaigns() {
+
+  const select =
+    document.getElementById('drawResultCampaign');
+
+  select.innerHTML = `
+    <option value="">
+      全部活動
+    </option>
+  `;
+
+  const { data, error } =
+    await db.rpc('admin_get_campaigns');
+
+  if (error) {
+    console.error(error);
+    return;
   }
+
+  (data || []).forEach(item => {
+
+    const option =
+      document.createElement('option');
+
+    option.value = item.id;
+
+    option.textContent =
+      `${item.title} ${
+        item.status === 'ended'
+          ? '（已結束）'
+          : item.status === 'active'
+            ? '（進行中／已排程）'
+            : '（草稿）'
+      }`;
+
+    select.appendChild(option);
+
+  });
 
 }
 
@@ -2401,17 +2472,17 @@ function filterDrawResults() {
 
   const keyword =
     document.getElementById('drawResultSearch')
-      .value.trim()
+      .value
+      .trim()
       .toLowerCase();
 
+  const campaignId =
+    document.getElementById('drawResultCampaign')
+      .value;
 
-  if (!keyword) {
-
-    renderDrawResults(allDrawResults);
-
-    return;
-
-  }
+  const redeemedFilter =
+    document.getElementById('drawResultRedeemed')
+      .value;
 
 
   const filtered =
@@ -2429,10 +2500,36 @@ function filterDrawResults() {
         (item.prize_name || '')
           .toLowerCase();
 
-      return (
+
+      const matchesKeyword =
+        !keyword ||
         name.includes(keyword) ||
         email.includes(keyword) ||
-        prize.includes(keyword)
+        prize.includes(keyword);
+
+
+      const matchesCampaign =
+        !campaignId ||
+        item.campaign_id === campaignId;
+
+
+      let matchesRedeemed = true;
+
+      if (redeemedFilter === 'redeemed') {
+        matchesRedeemed =
+          item.redeemed === true;
+      }
+
+      if (redeemedFilter === 'unredeemed') {
+        matchesRedeemed =
+          item.redeemed === false;
+      }
+
+
+      return (
+        matchesKeyword &&
+        matchesCampaign &&
+        matchesRedeemed
       );
 
     });
