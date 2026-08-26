@@ -389,7 +389,8 @@ const endText =
 
 let ruleText =
   `活動期間：${startText} ～ ${endText}\n` +
-  `每消費 ${data.spend_per_draw} 元可獲得 1 抽`;
+  `每消費 ${data.spend_per_draw} 元可獲得 1 抽\n` +
+  `本期未使用抽數於活動結束後失效，不累積至下一期。`;
 
 if (data.end_when_jackpot_drawn) {
   ruleText +=
