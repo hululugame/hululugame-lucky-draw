@@ -803,6 +803,34 @@ small,
 .prize-image[src$="no-prize.png"] {
   transform: scale(1.05);
 }
+.board-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.board-tab {
+  height: 40px;
+  border: 1px solid rgba(185,28,28,.14);
+  border-radius: 12px;
+  background: #fff7ef;
+  color: #8f2c2c;
+  font-size: 13px;
+  font-weight: 800;
+  box-shadow: 0 4px 10px rgba(82,54,31,.06);
+}
+
+.board-tab.active {
+  background: linear-gradient(135deg, #b91c1c, #e63946);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 6px 14px rgba(185,28,28,.18);
+}
+
+.board-tab:active {
+  transform: scale(.98);
+}
   </style>
 </head>
 
