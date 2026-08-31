@@ -700,6 +700,46 @@ small,
     font-size: 16px;
   }
 }
+.rules-card {
+  padding: 22px 20px;
+  background:
+    linear-gradient(180deg, #fff 0%, #fffaf3 100%);
+}
+
+.rules-title {
+  font-size: 21px;
+  font-weight: 900;
+  color: #2b2118;
+  margin-bottom: 14px;
+}
+
+.rule-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 13px 0;
+  border-bottom: 1px solid rgba(120,100,80,.08);
+  font-size: 14px;
+  line-height: 1.6;
+  color: #5f5147;
+}
+
+.rule-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.rule-icon {
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: #fff1e8;
+  font-size: 16px;
+}
   </style>
 </head>
 
@@ -837,11 +877,41 @@ small,
 </section>
 
 
-  <section class="card notice">
-    消費滿指定金額即可獲得抽獎機會。<br>
-    每一格只能被抽取一次。<br>
-    實際獎品與領獎方式以活動公告為準。
-  </section>
+  <section class="card rules-card">
+
+  <div class="rules-title">
+    📌 活動說明
+  </div>
+
+  <div class="rule-item">
+    <div class="rule-icon">🎟️</div>
+    <div>
+      消費滿指定金額，即可獲得抽獎機會
+    </div>
+  </div>
+
+  <div class="rule-item">
+    <div class="rule-icon">🧧</div>
+    <div>
+      每一格只能被抽取一次
+    </div>
+  </div>
+
+  <div class="rule-item">
+    <div class="rule-icon">⏰</div>
+    <div>
+      抽獎機會限本期活動使用，活動結束後失效
+    </div>
+  </div>
+
+  <div class="rule-item">
+    <div class="rule-icon">🎁</div>
+    <div>
+      實際獎品與領獎方式，以活動公告為準
+    </div>
+  </div>
+
+</section>
 
 </main>
 
