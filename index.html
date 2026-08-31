@@ -957,11 +957,7 @@ small,
     <div class="draw-gift">🎁</div>
   </div>
 
-  <div class="board-tabs">
-  <button class="board-tab active" onclick="showBoardPage(0)">1–100</button>
-  <button class="board-tab" onclick="showBoardPage(1)">101–200</button>
-  <button class="board-tab" onclick="showBoardPage(2)">201–300</button>
-</div>
+  <div id="boardTabs" class="board-tabs"></div>
 
 <div id="board" class="board">
   <div class="loading">載入格子中...</div>
@@ -1212,12 +1208,58 @@ card.innerHTML = `
   }
 
   allSlots = data || [];
-  currentBoardPage = 0;
+currentBoardPage = 0;
 
-  renderBoardPage();
+renderBoardTabs();
+renderBoardPage();
 
 }
 
+function renderBoardTabs() {
+
+  const tabs =
+    document.getElementById('boardTabs');
+
+  tabs.innerHTML = '';
+
+  if (!allSlots || allSlots.length === 0) {
+    return;
+  }
+
+  const pageSize = 100;
+
+  const totalPages =
+    Math.ceil(allSlots.length / pageSize);
+
+  for (let page = 0; page < totalPages; page++) {
+
+    const start =
+      page * pageSize + 1;
+
+    const end =
+      Math.min(
+        (page + 1) * pageSize,
+        allSlots.length
+      );
+
+    const button =
+      document.createElement('button');
+
+    button.className =
+      page === currentBoardPage
+        ? 'board-tab active'
+        : 'board-tab';
+
+    button.innerText =
+      `${start}–${end}`;
+
+    button.onclick = () =>
+      showBoardPage(page);
+
+    tabs.appendChild(button);
+  }
+
+}
 
 function showBoardPage(page) {
 
