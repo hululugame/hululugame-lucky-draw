@@ -1255,6 +1255,13 @@ if (!data || data.length === 0) {
 
 data.forEach(prize => {
 
+if (
+  prize.image_url &&
+  prize.image_url.includes('jackpot-3000')
+) {
+  return;
+}
+
   const card =
     document.createElement('div');
 
