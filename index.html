@@ -831,6 +831,74 @@ small,
 .board-tab:active {
   transform: scale(.98);
 }
+
+.jackpot-card {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  padding: 24px 18px 22px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255,205,70,.28), transparent 34%),
+    linear-gradient(180deg, #fffaf0 0%, #fff4df 100%);
+  border: 1px solid rgba(214,156,35,.18);
+}
+
+.jackpot-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255,255,255,.75), transparent 18%),
+    radial-gradient(circle at 82% 22%, rgba(255,214,88,.18), transparent 20%);
+  pointer-events: none;
+}
+
+.jackpot-label {
+  position: relative;
+  z-index: 1;
+  display: inline-block;
+  padding: 7px 13px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #b91c1c, #e63946);
+  color: white;
+  font-size: 13px;
+  font-weight: 900;
+  box-shadow: 0 6px 14px rgba(185,28,28,.18);
+}
+
+.jackpot-image {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 150px;
+  object-fit: contain;
+  margin: 8px 0 2px;
+  transform: scale(1.15);
+}
+
+.jackpot-amount {
+  position: relative;
+  z-index: 1;
+  font-size: 38px;
+  line-height: 1;
+  font-weight: 1000;
+  color: #b91c1c;
+  letter-spacing: -.02em;
+}
+
+.jackpot-note {
+  position: relative;
+  z-index: 1;
+  margin-top: 10px;
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.72);
+  border: 1px solid rgba(185,28,28,.10);
+  color: #7c4a2d;
+  font-size: 12px;
+  font-weight: 800;
+}
   </style>
 </head>
 
@@ -880,6 +948,28 @@ small,
     id="campaignRules"
     class="campaign-rules"
   ></div>
+
+</section>
+
+<section class="card jackpot-card">
+
+  <div class="jackpot-label">
+    🏆 本期頭獎
+  </div>
+
+  <img
+    src="/images/prizes/jackpot-3000.png"
+    alt="本期頭獎"
+    class="jackpot-image"
+  >
+
+  <div class="jackpot-amount">
+    3000 元
+  </div>
+
+  <div class="jackpot-note">
+    限量 1 名
+  </div>
 
 </section>
 
