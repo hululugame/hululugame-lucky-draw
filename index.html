@@ -354,6 +354,87 @@ small,
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
+.campaign-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 24px 20px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(246,196,83,.18), transparent 34%),
+    linear-gradient(180deg, rgba(255,255,255,.98), rgba(255,252,246,.98));
+}
+
+.campaign-hero::after {
+  content: "福";
+  position: absolute;
+  right: -10px;
+  bottom: -34px;
+  font-size: 120px;
+  font-weight: 900;
+  color: rgba(185,28,28,.035);
+  transform: rotate(-8deg);
+  pointer-events: none;
+}
+
+.campaign-status {
+  width: max-content;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 auto 12px;
+  padding: 6px 11px;
+  border-radius: 999px;
+  background: #fff3f0;
+  color: #a61b1b;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.campaign-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #e63946;
+  box-shadow: 0 0 0 4px rgba(230,57,70,.10);
+}
+
+.campaign-title {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  font-size: 26px;
+  line-height: 1.35;
+  font-weight: 900;
+  color: #2b2118;
+  margin-bottom: 10px;
+}
+
+.remaining {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  font-size: 19px;
+  line-height: 1.5;
+  color: #dc2636;
+  font-weight: 900;
+}
+
+.campaign-divider {
+  width: 46px;
+  height: 3px;
+  margin: 16px auto;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f6c453, #e63946);
+}
+
+.campaign-rules {
+  position: relative;
+  z-index: 1;
+  white-space: pre-line;
+  line-height: 1.85;
+  font-size: 14px;
+  color: #6b5d52;
+  text-align: center;
+}
   </style>
 </head>
 
@@ -382,22 +463,29 @@ small,
 
 <main class="container">
 
-  <section class="card">
-    <div id="campaignTitle" class="campaign-title">
-      載入活動中...
-    </div>
+  <section class="card campaign-hero">
 
-    <div id="remaining" class="remaining">
-      載入中...
-    </div>
-    
-    <div
-  id="campaignRules"
-  class="small"
-  style="margin-top:10px;line-height:1.8;"
-></div>
+  <div class="campaign-status">
+    <span class="campaign-status-dot"></span>
+    活動資訊
+  </div>
 
-  </section>
+  <div id="campaignTitle" class="campaign-title">
+    載入活動中...
+  </div>
+
+  <div id="remaining" class="remaining">
+    載入中...
+  </div>
+
+  <div class="campaign-divider"></div>
+
+  <div
+    id="campaignRules"
+    class="campaign-rules"
+  ></div>
+
+</section>
 
 
   <section class="card prizes">
