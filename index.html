@@ -1322,13 +1322,45 @@ if (
 
   card.className = 'prize-card';
 
-  const imageHtml = prize.image_url
+  let fallbackIcon = '🎁';
+
+const prizeName =
+  (prize.prize_name || '').toLowerCase();
+
+if (prizeName.includes('line')) {
+  fallbackIcon = '🟢';
+} else if (
+  prizeName.includes('折') ||
+  prizeName.includes('券')
+) {
+  fallbackIcon = '🎟️';
+} else if (
+  prizeName.includes('現折') ||
+  prizeName.includes('現金')
+) {
+  fallbackIcon = '💵';
+} else if (
+  prizeName.includes('多送') ||
+  prizeName.includes('加抽') ||
+  prizeName.includes('1抽')
+) {
+  fallbackIcon = '🎫';
+} else if (
+  prizeName.includes('麥香') ||
+  prizeName.includes('飲料') ||
+  prizeName.includes('茶')
+) {
+  fallbackIcon = '🧃';
+}
+
+const imageHtml = prize.image_url
   ? `<img
        class="prize-image"
        src="${escapeHtml(prize.image_url)}"
        alt="${escapeHtml(prize.prize_name)}"
+       onerror="this.outerHTML='<div class=&quot;prize-icon&quot;>${fallbackIcon}</div>'"
      >`
-  : `<div class="prize-icon">🎁</div>`;
+  : `<div class="prize-icon">${fallbackIcon}</div>`;
 
 card.innerHTML = `
   ${imageHtml}
