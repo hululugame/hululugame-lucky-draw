@@ -929,9 +929,15 @@ small,
     <div class="draw-gift">🎁</div>
   </div>
 
-  <div id="board" class="board">
-    <div class="loading">載入格子中...</div>
-  </div>
+  <div class="board-tabs">
+  <button class="board-tab active" onclick="showBoardPage(0)">1–100</button>
+  <button class="board-tab" onclick="showBoardPage(1)">101–200</button>
+  <button class="board-tab" onclick="showBoardPage(2)">201–300</button>
+</div>
+
+<div id="board" class="board">
+  <div class="loading">載入格子中...</div>
+</div>
 
   <div class="draw-tip">
     ✦ 點選尚未抽出的格子即可進行抽獎
@@ -1049,6 +1055,8 @@ small,
   let currentUser = null;
 let remainingDraws = 0;
 
+let allSlots = [];
+let currentBoardPage = 0;
 
   async function loadCampaign() {
 
@@ -1167,60 +1175,96 @@ card.innerHTML = `
 
   async function loadSlots() {
 
-    const { data, error } =
-      await db.rpc('get_public_slots');
+  const { data, error } =
+    await db.rpc('get_public_slots');
 
-    if (error) {
-      console.error(error);
-      return;
-    }
+  if (error) {
+    console.error(error);
+    return;
+  }
 
-    const board =
-      document.getElementById('board');
+  allSlots = data || [];
+  currentBoardPage = 0;
 
-    board.innerHTML = '';
+  renderBoardPage();
 
-if (!data || data.length === 0) {
-  board.innerHTML =
-    '<div class="small">目前沒有可抽的格子</div>';
-  return;
 }
 
-data.forEach(item => {
 
-      const slot =
-        document.createElement('div');
+function showBoardPage(page) {
 
-      slot.className =
-        item.is_drawn
-          ? 'slot drawn'
-          : 'slot';
+  currentBoardPage = page;
 
-      if (item.is_drawn) {
-
-        slot.innerHTML = `
-          <span>✓</span>
-          ${String(item.slot_number).padStart(2,'0')}
-          已抽
-        `;
-
-      } else {
-
-        slot.innerHTML = `
-          <span>🧧</span>
-          ${String(item.slot_number).padStart(2,'0')}
-        `;
-
-        slot.onclick = () =>
-          drawSlot(item.slot_number);
-
-      }
-
-      board.appendChild(slot);
-
+  document.querySelectorAll('.board-tab')
+    .forEach((tab, index) => {
+      tab.classList.toggle(
+        'active',
+        index === page
+      );
     });
 
+  renderBoardPage();
+
+}
+
+
+function renderBoardPage() {
+
+  const board =
+    document.getElementById('board');
+
+  board.innerHTML = '';
+
+  if (!allSlots || allSlots.length === 0) {
+    board.innerHTML =
+      '<div class="small">目前沒有可抽的格子</div>';
+    return;
   }
+
+  const start =
+    currentBoardPage * 100;
+
+  const end =
+    start + 100;
+
+  const pageSlots =
+    allSlots.slice(start, end);
+
+  pageSlots.forEach(item => {
+
+    const slot =
+      document.createElement('div');
+
+    slot.className =
+      item.is_drawn
+        ? 'slot drawn'
+        : 'slot';
+
+    if (item.is_drawn) {
+
+      slot.innerHTML = `
+        <span>✓</span>
+        ${String(item.slot_number).padStart(2,'0')}
+        已抽
+      `;
+
+    } else {
+
+      slot.innerHTML = `
+        <span>🧧</span>
+        ${String(item.slot_number).padStart(2,'0')}
+      `;
+
+      slot.onclick = () =>
+        drawSlot(item.slot_number);
+
+    }
+
+    board.appendChild(slot);
+
+  });
+
+}
 
 
   async function checkMemberSession() {
