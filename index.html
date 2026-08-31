@@ -798,6 +798,11 @@ small,
 .prize-image[src$=".jpg"] {
   transform: none;
 }
+
+/* 銘謝惠顧圖片本身已經很滿，不要跟其他 PNG 放大 */
+.prize-image[src$="no-prize.png"] {
+  transform: scale(1.05);
+}
   </style>
 </head>
 
