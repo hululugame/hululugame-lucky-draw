@@ -184,6 +184,65 @@
     .hidden {
   display: none !important;
 }
+
+:root {
+  --brand-red: #b91c1c;
+  --brand-red-2: #ef4444;
+  --brand-gold: #f6c453;
+  --brand-cream: #fff8eb;
+  --brand-cream-2: #fffdf7;
+  --brand-text: #2b2118;
+  --brand-muted: #7c6f64;
+  --card-border: rgba(185, 28, 28, 0.08);
+  --shadow-soft: 0 12px 30px rgba(82, 54, 31, 0.10);
+  --shadow-hover: 0 16px 38px rgba(82, 54, 31, 0.16);
+}
+
+body {
+  background:
+    radial-gradient(circle at 20% 0%, rgba(246,196,83,.16), transparent 30%),
+    linear-gradient(180deg, #fffaf0 0%, #fff7e8 55%, #fffdf7 100%);
+  color: var(--brand-text);
+}
+
+.card,
+section,
+.panel {
+  border-radius: 22px;
+}
+
+.card {
+  background: rgba(255,255,255,.92);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+button,
+.btn,
+input[type="button"],
+input[type="submit"] {
+  border-radius: 16px;
+  transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease;
+}
+
+button:active,
+.btn:active,
+input[type="button"]:active,
+input[type="submit"]:active {
+  transform: scale(.98);
+}
+
+h1, h2, h3 {
+  letter-spacing: .01em;
+}
+
+small,
+.muted,
+.subtext {
+  color: var(--brand-muted);
+}
   </style>
 </head>
 
