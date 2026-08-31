@@ -435,6 +435,82 @@ small,
   color: #6b5d52;
   text-align: center;
 }
+#prizeList {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.prizes h2 {
+  margin: 0 0 16px;
+  font-size: 24px;
+  color: #2b2118;
+}
+
+.prize-card {
+  min-height: 145px;
+  padding: 16px 10px 14px;
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, #fffdf8 0%, #fff7ea 100%);
+  border: 1px solid rgba(185,28,28,.08);
+  box-shadow:
+    0 8px 18px rgba(82,54,31,.08),
+    inset 0 1px 0 rgba(255,255,255,.9);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.prize-card:active {
+  transform: scale(.98);
+}
+
+.prize-icon {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.prize-name {
+  font-size: 14px;
+  line-height: 1.45;
+  font-weight: 800;
+  color: #3a2c22;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.prize-count {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(185,28,28,.16);
+  font-size: 12px;
+  font-weight: 700;
+  color: #a61b1b;
+}
+
+@media (max-width: 420px) {
+  #prizeList {
+    gap: 9px;
+  }
+
+  .prize-card {
+    min-height: 132px;
+    padding: 13px 7px 12px;
+  }
+
+  .prize-name {
+    font-size: 13px;
+  }
+
+  .prize-count {
+    font-size: 11px;
+  }
+}
   </style>
 </head>
 
@@ -700,23 +776,27 @@ if (!data || data.length === 0) {
 
 data.forEach(prize => {
 
-      const row =
-        document.createElement('div');
+  const card =
+    document.createElement('div');
 
-      row.className = 'prize-row';
+  card.className = 'prize-card';
 
-      row.innerHTML = `
-        <span>🎁 ${escapeHtml(prize.prize_name)}</span>
-        <strong>
-          剩 ${prize.remaining_quantity}
-          / ${prize.total_quantity}
-        </strong>
-      `;
+  card.innerHTML = `
+    <div class="prize-icon">🎁</div>
 
-      list.appendChild(row);
+    <div class="prize-name">
+      ${escapeHtml(prize.prize_name)}
+    </div>
 
-    });
+    <div class="prize-count">
+      剩 ${prize.remaining_quantity}
+      / ${prize.total_quantity}
+    </div>
+  `;
 
+  list.appendChild(card);
+
+});
   }
 
 
