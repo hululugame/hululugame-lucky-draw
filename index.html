@@ -970,6 +970,45 @@ html {
   line-height: 1.7;
   color: #6f6259;
 }
+.contact-card {
+  padding: 24px 20px;
+}
+
+.contact-card h2 {
+  margin: 0 0 18px;
+  font-size: 28px;
+  font-weight: 800;
+  color: #2b211b;
+}
+
+.contact-item {
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(120, 90, 70, .12);
+}
+
+.contact-item:last-child {
+  border-bottom: none;
+}
+
+.contact-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #9b6b4f;
+  margin-bottom: 6px;
+}
+
+.contact-value {
+  font-size: 20px;
+  font-weight: 800;
+  color: #b91c1c;
+  margin-bottom: 6px;
+}
+
+.contact-note {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #6f6259;
+}
   </style>
 </head>
 
@@ -1215,6 +1254,40 @@ html {
   </div>
 </section>
 
+<section id="contactSection" class="card contact-card">
+
+  <h2>📩 聯絡我們</h2>
+
+  <div class="contact-item">
+    <div class="contact-label">
+      主要 Instagram
+    </div>
+
+    <div class="contact-value">
+      @hululugame
+    </div>
+
+    <div class="contact-note">
+      手遊代儲、下單與一般客服需求，請優先聯絡此帳號。
+    </div>
+  </div>
+
+  <div class="contact-item">
+    <div class="contact-label">
+      備用 Instagram
+    </div>
+
+    <div class="contact-value">
+      @hululugame2.0
+    </div>
+
+    <div class="contact-note">
+      如主要帳號暫時無法使用，可改由此備用帳號聯絡。
+    </div>
+  </div>
+
+</section>
+
 </main>
 
 <footer class="site-footer">
@@ -1229,7 +1302,7 @@ html {
   <div class="footer-links">
     <a href="#rulesSection">活動說明</a>
     <a href="#faqSection">常見問題</a>
-    <span>聯絡我們</span>
+    <a href="#contactSection">聯絡我們</a>
   </div>
 
   <div class="footer-copy">
