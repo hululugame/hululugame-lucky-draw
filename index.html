@@ -566,6 +566,140 @@ small,
   transform: translateY(1px) scale(.985);
   box-shadow: 0 4px 10px rgba(185,28,28,.16);
 }
+.draw-card {
+  position: relative;
+  overflow: hidden;
+  padding: 22px 18px 20px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(246,196,83,.18), transparent 28%),
+    linear-gradient(180deg, #fffefd 0%, #fff9f0 100%);
+}
+
+.draw-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.draw-eyebrow {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .18em;
+  color: #c24132;
+  margin-bottom: 5px;
+}
+
+.board-title {
+  text-align: left;
+  font-size: 23px;
+  line-height: 1.3;
+  font-weight: 900;
+  margin-bottom: 4px;
+  color: #2b2118;
+}
+
+.draw-subtitle {
+  font-size: 13px;
+  color: #8a7b70;
+}
+
+.draw-gift {
+  flex: 0 0 auto;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  background: linear-gradient(135deg, #fff1dc, #ffe6ba);
+  box-shadow: 0 8px 18px rgba(183,120,30,.12);
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 9px;
+}
+
+.slot {
+  position: relative;
+  aspect-ratio: .82;
+  border: 1px solid rgba(255,255,255,.45);
+  background:
+    linear-gradient(180deg, #f84d49 0%, #df272f 65%, #bd1f28 100%);
+  color: white;
+  border-radius: 13px;
+  font-size: 14px;
+  font-weight: 900;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 6px 12px rgba(172,35,40,.18),
+    inset 0 1px 0 rgba(255,255,255,.28);
+  transition: transform .16s ease, box-shadow .16s ease;
+}
+
+.slot::before {
+  content: "🎀";
+  position: absolute;
+  top: 7px;
+  font-size: 13px;
+  opacity: .92;
+}
+
+.slot span {
+  margin-top: 12px;
+  font-size: 18px;
+}
+
+.slot:active {
+  transform: scale(.96);
+  box-shadow: 0 3px 8px rgba(172,35,40,.16);
+}
+
+.slot.drawn {
+  background: linear-gradient(180deg, #ece8e3, #d8d2cb);
+  color: #91877f;
+  border-color: rgba(120,110,100,.10);
+  box-shadow: none;
+}
+
+.slot.drawn::before {
+  opacity: .35;
+}
+
+.draw-tip {
+  margin-top: 16px;
+  padding-top: 13px;
+  border-top: 1px dashed rgba(185,28,28,.12);
+  text-align: center;
+  font-size: 12px;
+  color: #8a7b70;
+}
+
+@media (max-width: 420px) {
+  .draw-card {
+    padding: 20px 14px 18px;
+  }
+
+  .board {
+    gap: 7px;
+  }
+
+  .slot {
+    border-radius: 11px;
+    font-size: 12px;
+  }
+
+  .slot span {
+    font-size: 16px;
+  }
+}
   </style>
 </head>
 
@@ -674,17 +808,33 @@ small,
 </section>
 
 
-  <section class="card">
+<section class="card draw-card">
 
-    <div class="board-title">
-      🧧 選一格抽抽樂
+  <div class="draw-card-head">
+    <div>
+      <div class="draw-eyebrow">LUCKY DRAW</div>
+
+      <div class="board-title">
+        🧧 選一格抽抽樂
+      </div>
+
+      <div class="draw-subtitle">
+        選一格，看看今天的手氣如何
+      </div>
     </div>
 
-    <div id="board" class="board">
-      <div class="loading">載入格子中...</div>
-    </div>
+    <div class="draw-gift">🎁</div>
+  </div>
 
-  </section>
+  <div id="board" class="board">
+    <div class="loading">載入格子中...</div>
+  </div>
+
+  <div class="draw-tip">
+    ✦ 點選尚未抽出的格子即可進行抽獎
+  </div>
+
+</section>
 
 
   <section class="card notice">
