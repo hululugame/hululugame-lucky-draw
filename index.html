@@ -899,6 +899,32 @@ small,
   font-size: 12px;
   font-weight: 800;
 }
+
+.campaign-progress {
+  width: 100%;
+  height: 12px;
+  margin-top: 14px;
+  background: #f3e6dc;
+  border-radius: 999px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,.08);
+}
+
+.campaign-progress-bar {
+  height: 100%;
+  width: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #b91c1c, #e63946, #f5b942);
+  transition: width .35s ease;
+}
+
+.campaign-progress-text {
+  margin-top: 8px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #8a6b58;
+}
   </style>
 </head>
 
@@ -941,6 +967,14 @@ small,
   <div id="remaining" class="remaining">
     載入中...
   </div>
+  
+  <div class="campaign-progress">
+  <div id="campaignProgressBar" class="campaign-progress-bar"></div>
+</div>
+
+<div id="campaignProgressText" class="campaign-progress-text">
+  載入進度中...
+</div>
 
   <div class="campaign-divider"></div>
 
@@ -1200,6 +1234,17 @@ let currentBoardPage = 0;
     document.getElementById('remaining').innerText =
       `剩餘 ${data.remaining_slots} / ${data.total_slots} 格`;
 
+const progressPercent =
+  data.total_slots > 0
+    ? ((data.total_slots - data.remaining_slots) / data.total_slots) * 100
+    : 0;
+
+document.getElementById('campaignProgressBar').style.width =
+  `${progressPercent}%`;
+
+document.getElementById('campaignProgressText').innerText =
+  `已抽 ${data.total_slots - data.remaining_slots} 格・剩餘 ${data.remaining_slots} 格`;
+  
 const startText =
   data.start_at
     ? new Date(data.start_at).toLocaleString(
