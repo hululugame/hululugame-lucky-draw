@@ -779,6 +779,13 @@ small,
   font-size: 11px;
   color: rgba(255,255,255,.42);
 }
+.prize-image {
+  width: 100%;
+  height: 78px;
+  object-fit: contain;
+  margin-bottom: 8px;
+  display: block;
+}
   </style>
 </head>
 
@@ -1114,18 +1121,26 @@ data.forEach(prize => {
 
   card.className = 'prize-card';
 
-  card.innerHTML = `
-    <div class="prize-icon">🎁</div>
+  const imageHtml = prize.image_url
+  ? `<img
+       class="prize-image"
+       src="${escapeHtml(prize.image_url)}"
+       alt="${escapeHtml(prize.prize_name)}"
+     >`
+  : `<div class="prize-icon">🎁</div>`;
 
-    <div class="prize-name">
-      ${escapeHtml(prize.prize_name)}
-    </div>
+card.innerHTML = `
+  ${imageHtml}
 
-    <div class="prize-count">
-      剩 ${prize.remaining_quantity}
-      / ${prize.total_quantity}
-    </div>
-  `;
+  <div class="prize-name">
+    ${escapeHtml(prize.prize_name)}
+  </div>
+
+  <div class="prize-count">
+    剩 ${prize.remaining_quantity}
+    / ${prize.total_quantity}
+  </div>
+`;
 
   list.appendChild(card);
 
