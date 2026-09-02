@@ -1794,6 +1794,16 @@ function renderMembers(members) {
       <div class="small" style="margin:6px 0 12px;">
         ${escapeHtmlAdmin(member.email)}
       </div>
+      
+      <div class="small" style="margin-bottom:12px;color:#777;">
+  註冊時間：
+  ${member.created_at
+    ? new Date(member.created_at).toLocaleString(
+        'zh-TW',
+        { hour12: false }
+      )
+    : '未知'}
+</div>
 
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
 
