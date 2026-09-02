@@ -479,6 +479,48 @@ function getDeviceId() {
   );
 }
 
+async function updatePassword() {
+
+  const newPassword =
+    document.getElementById('newPassword').value;
+
+  const confirmPassword =
+    document.getElementById('confirmNewPassword').value;
+
+  if (!newPassword || !confirmPassword) {
+    alert('請完整輸入兩次新密碼');
+    return;
+  }
+
+  if (newPassword.length < 6) {
+    alert('新密碼至少需要 6 碼');
+    return;
+  }
+
+  if (newPassword !== confirmPassword) {
+    alert('兩次輸入的密碼不一致');
+    return;
+  }
+
+  const { error } =
+    await db.auth.updateUser({
+      password: newPassword
+    });
+
+  if (error) {
+    console.error(error);
+    alert('密碼更新失敗，請重新操作忘記密碼');
+    return;
+  }
+
+  alert('✅ 密碼設定成功，請使用新密碼重新登入');
+
+  await db.auth.signOut();
+
+  window.location.href =
+    'https://draw.hululugame.com/member.html';
+}
+
 
     async function register() {
 
