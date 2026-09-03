@@ -225,6 +225,47 @@ header,
 .small {
   color: #b8aa86 !important;
 }
+/* ===== 黑金登入介面：可讀性修正 ===== */
+
+.tab {
+  background: #161616 !important;
+  color: #cdbd8d !important;
+  border: 1px solid rgba(212,175,55,.18) !important;
+}
+
+.tab.active {
+  background:
+    linear-gradient(135deg, #f4d36f, #c8921f) !important;
+  color: #161006 !important;
+  box-shadow: 0 8px 20px rgba(212,175,55,.22);
+}
+
+.input::placeholder {
+  color: #b8ad93 !important;
+  opacity: 1;
+}
+
+.forgot-password-btn {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  text-align: center;
+  font-size: 15px;
+  color: #e2c25a !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 10px 0 !important;
+}
+
+.forgot-password-btn:active {
+  opacity: .7;
+}
+
+#loginBox,
+#registerBox,
+#resetPasswordBox {
+  color: #f7f0df;
+}
   </style>
 </head>
 
