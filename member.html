@@ -297,6 +297,67 @@ header,
   font-weight: 700 !important;
   text-decoration: none !important;
 }
+/* ===== 黑金登入介面：精品感收尾 ===== */
+
+#authCard {
+  position: relative;
+  overflow: hidden;
+}
+
+#authCard::before {
+  content: "";
+  position: absolute;
+  top: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 260px;
+  height: 180px;
+  background:
+    radial-gradient(circle, rgba(255,215,100,.12), transparent 70%);
+  pointer-events: none;
+}
+
+#authCard::after {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,215,100,.08);
+  pointer-events: none;
+}
+
+#loginBox,
+#registerBox,
+#resetPasswordBox,
+.tabs {
+  position: relative;
+  z-index: 1;
+}
+
+.button {
+  letter-spacing: .5px;
+}
+
+.header {
+  position: relative;
+}
+
+.header::after {
+  content: "";
+  position: absolute;
+  left: 15%;
+  right: 15%;
+  bottom: -3px;
+  height: 3px;
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #f6d56b,
+      transparent
+    );
+  box-shadow: 0 0 12px rgba(246,213,107,.45);
+}
   </style>
 </head>
 
