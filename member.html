@@ -358,6 +358,101 @@ header,
     );
   box-shadow: 0 0 12px rgba(246,213,107,.45);
 }
+/* ===== 黑金登入介面：星芒流光背景 ===== */
+
+body {
+  background:
+    /* 金色小星點 */
+    radial-gradient(circle at 12% 18%, rgba(255,220,120,.8) 0 1px, transparent 2px),
+    radial-gradient(circle at 82% 14%, rgba(255,210,80,.65) 0 1px, transparent 2px),
+    radial-gradient(circle at 22% 62%, rgba(255,220,120,.55) 0 1px, transparent 2px),
+    radial-gradient(circle at 76% 68%, rgba(255,200,70,.7) 0 1px, transparent 2px),
+    radial-gradient(circle at 48% 84%, rgba(255,215,100,.45) 0 1px, transparent 2px),
+
+    /* 斜向流星光線 */
+    linear-gradient(
+      125deg,
+      transparent 0%,
+      transparent 21%,
+      rgba(255,210,90,.10) 21.3%,
+      rgba(255,210,90,.35) 21.6%,
+      transparent 22%
+    ),
+
+    linear-gradient(
+      125deg,
+      transparent 0%,
+      transparent 69%,
+      rgba(255,210,90,.08) 69.3%,
+      rgba(255,210,90,.28) 69.6%,
+      transparent 70%
+    ),
+
+    /* 中央淡金光暈 */
+    radial-gradient(
+      circle at 50% 35%,
+      rgba(212,175,55,.12),
+      transparent 32%
+    ),
+
+    linear-gradient(
+      180deg,
+      #080806 0%,
+      #130f08 48%,
+      #080806 100%
+    ) !important;
+
+  background-attachment: fixed;
+}
+
+
+/* 登入卡外圍再加淡金光 */
+#authCard {
+  box-shadow:
+    0 22px 55px rgba(0,0,0,.55),
+    0 0 35px rgba(212,175,55,.08),
+    inset 0 1px 0 rgba(255,255,255,.03) !important;
+}
+
+
+/* 金色星芒裝飾 */
+#authCard::before {
+  content: "✦     ·          ✧        ·";
+  position: absolute;
+  top: 14px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  color: rgba(246,213,107,.32);
+  font-size: 13px;
+  letter-spacing: 18px;
+  pointer-events: none;
+}
+
+
+/* 登入按鈕金色微光 */
+#loginBox .button {
+  position: relative;
+  overflow: hidden;
+}
+
+#loginBox .button::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -45%;
+  width: 30%;
+  height: 200%;
+  transform: rotate(25deg);
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,.28),
+      transparent
+    );
+  pointer-events: none;
+}
   </style>
 </head>
 
