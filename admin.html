@@ -235,6 +235,12 @@
     class="input"
     placeholder="獎品名稱，例如：95折券"
   >
+  
+  <input
+  id="prizeImageUrl"
+  class="input"
+  placeholder="圖片網址，例如：/images/prizes/line-100.png"
+>
 
   <input
     id="prizeQuantity"
@@ -996,6 +1002,10 @@ async function addPrize() {
     document.getElementById('prizeName')
       .value.trim();
 
+const imageUrl =
+  document.getElementById('prizeImageUrl')
+    .value.trim();
+    
   const quantity =
     Number(
       document.getElementById('prizeQuantity')
@@ -1049,17 +1059,17 @@ async function addPrize() {
 
 
   const { error } =
-    await db.rpc(
-      'admin_add_prize',
-      {
-        p_campaign_id: campaignId,
-        p_name: name,
-        p_quantity: quantity,
-        p_requires_redemption: requiresRedemption,
-p_is_jackpot: isJackpot
-      }
-    );
-
+  await db.rpc(
+    'admin_add_prize',
+    {
+      p_campaign_id: campaignId,
+      p_name: name,
+      p_quantity: quantity,
+      p_requires_redemption: requiresRedemption,
+      p_is_jackpot: isJackpot,
+      p_image_url: imageUrl || null
+    }
+  );
 
   if (error) {
 
@@ -1079,6 +1089,9 @@ p_is_jackpot: isJackpot
 
   document.getElementById('prizeName')
     .value = '';
+    
+    document.getElementById('prizeImageUrl')
+  .value = '';
 
   document.getElementById('prizeQuantity')
     .value = '';
