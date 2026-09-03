@@ -242,6 +242,27 @@
   placeholder="圖片網址，例如：/images/prizes/line-100.png"
 >
 
+<input
+  id="prizeImageFile"
+  class="input"
+  type="file"
+  accept="image/png,image/jpeg,image/webp"
+>
+
+<button
+  type="button"
+  class="button"
+  onclick="uploadPrizeImage()"
+>
+  📤 上傳圖片
+</button>
+
+<div
+  id="prizeUploadStatus"
+  class="small"
+  style="margin-top:8px;"
+></div>
+
   <input
     id="prizeQuantity"
     class="input"
@@ -990,6 +1011,80 @@ async function loadCampaignPrizes(campaignId) {
 
   });
 
+}
+
+async function uploadPrizeImage() {
+
+  const fileInput =
+    document.getElementById('prizeImageFile');
+
+  const status =
+    document.getElementById('prizeUploadStatus');
+
+  const imageUrlInput =
+    document.getElementById('prizeImageUrl');
+
+
+  const file =
+    fileInput.files[0];
+
+
+  if (!file) {
+    status.innerText =
+      '請先選擇圖片';
+    return;
+  }
+
+
+  status.innerText =
+    '上傳中...';
+
+
+  const extension =
+    file.name.split('.').pop().toLowerCase();
+
+  const fileName =
+    `${Date.now()}-${Math.random()
+      .toString(36)
+      .slice(2, 8)}.${extension}`;
+
+
+  const { error } =
+    await db.storage
+      .from('prize-images')
+      .upload(
+        fileName,
+        file,
+        {
+          cacheControl: '3600',
+          upsert: false
+        }
+      );
+
+
+  if (error) {
+
+    console.error(error);
+
+    status.innerText =
+      '上傳失敗：' + error.message;
+
+    return;
+  }
+
+
+  const { data } =
+    db.storage
+      .from('prize-images')
+      .getPublicUrl(fileName);
+
+
+  imageUrlInput.value =
+    data.publicUrl;
+
+
+  status.innerText =
+    '✅ 圖片上傳成功';
 }
 
 async function addPrize() {
