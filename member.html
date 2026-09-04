@@ -596,6 +596,52 @@ linear-gradient(
   border-color: #d8a72d !important;
   box-shadow: 0 0 0 3px rgba(216,167,45,.12) !important;
 }
+/* ===== 會員中心按鈕主次 ===== */
+
+/* 儲存暱稱：淡金次按鈕 */
+.member-save-btn {
+  background:
+    linear-gradient(
+      135deg,
+      #f6df9a 0%,
+      #e8bd55 100%
+    ) !important;
+
+  color: #2a2115 !important;
+  box-shadow:
+    0 8px 18px rgba(180,130,20,.14) !important;
+}
+
+
+/* 前往抽抽樂：主要按鈕 */
+.member-draw-btn {
+  background:
+    linear-gradient(
+      135deg,
+      #ffd95f 0%,
+      #d89e13 100%
+    ) !important;
+
+  color: #241a08 !important;
+
+  box-shadow:
+    0 10px 22px rgba(212,160,25,.28) !important;
+
+  font-weight: 800 !important;
+}
+
+
+/* 登出：白底金框 */
+.member-logout-btn {
+  background: #fffdf8 !important;
+
+  color: #6b5422 !important;
+
+  border:
+    1px solid rgba(201,146,31,.55) !important;
+
+  box-shadow: none !important;
+}
   </style>
 </head>
 
@@ -770,19 +816,17 @@ onclick="forgotPassword()"
         placeholder="會員暱稱"
       >
 
-      <button class="button light" onclick="saveProfile()">
-        儲存暱稱
-      </button>
+<button class="button member-save-btn" ...>
+  儲存暱稱
+</button>
 
+<button class="button member-draw-btn" ...>
+  🎪 前往抽抽樂
+</button>
 
-      <button class="button" onclick="goDraw()">
-        🎪 前往抽抽樂
-      </button>
-
-
-      <button class="button secondary" onclick="logout()">
-        登出
-      </button>
+<button class="button member-logout-btn" ...>
+  登出
+</button>
 
       <div id="memberStatus" class="status"></div>
 
