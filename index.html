@@ -1569,13 +1569,19 @@ html {
     alt="hululugame"
   >
 
-  <div class="result-ribbon">
-    ✨ 恭喜你中獎了！✨
-  </div>
+  <div
+  id="resultRibbon"
+  class="result-ribbon"
+>
+  ✨ 恭喜你中獎了！✨
+</div>
 
-  <div class="result-congrats">
-    CONGRATULATIONS
-  </div>
+<div
+  id="resultCongrats"
+  class="result-congrats"
+>
+  CONGRATULATIONS
+</div>
 
 </div>
 
@@ -1585,9 +1591,13 @@ html {
          style="margin-bottom:20px;font-weight:bold;">
     </div>
 
-    <button class="button" onclick="closeResult()">
-      收下獎品
-    </button>
+    <button
+  id="resultButton"
+  class="button"
+  onclick="closeResult()"
+>
+  收下獎品
+</button>
 
   </div>
 </div>
@@ -2169,6 +2179,25 @@ function goMemberCenter() {
   }
   
   function previewPrizeResult() {
+    
+    document.getElementById(
+  'resultOverlay'
+).classList.remove('no-prize-mode');
+
+document.getElementById(
+  'resultRibbon'
+).innerText =
+  '✨ 恭喜你中獎了！✨';
+
+document.getElementById(
+  'resultCongrats'
+).innerText =
+  'CONGRATULATIONS';
+
+document.getElementById(
+  'resultButton'
+).innerText =
+  '收下獎品';
 
   document.getElementById(
     'resultPrize'
@@ -2192,27 +2221,40 @@ function goMemberCenter() {
 function previewNoPrizeResult() {
 
   document.getElementById(
+    'resultRibbon'
+  ).innerText =
+    '🍀 今天差一點！';
+
+  document.getElementById(
+    'resultCongrats'
+  ).innerText =
+    'GOOD LUCK NEXT TIME';
+
+  document.getElementById(
     'resultPrize'
   ).innerText =
     '銘謝惠顧';
-
 
   document.getElementById(
     'resultRemaining'
   ).innerText =
     '剩餘抽獎次數：1 次';
 
+  document.getElementById(
+    'resultButton'
+  ).innerText =
+    '再接再厲';
 
   document.getElementById(
     'resultOverlay'
-  ).classList.add('no-prize-mode');
-
+  ).classList.add(
+    'no-prize-mode'
+  );
 
   document.getElementById(
     'resultOverlay'
   ).style.display =
     'flex';
-
 }
 
 
