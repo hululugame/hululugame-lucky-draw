@@ -293,9 +293,50 @@
     0 2px 4px rgba(90,0,0,.28);
 }
 
+.result-ribbon {
+  position: relative;
+  z-index: 2;
+}
+
+/* 左右緞帶尾巴 */
+.result-ribbon::before,
+.result-ribbon::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+
+  width: 34px;
+  height: 34px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #b80f20 0%,
+      #8f0b18 100%
+    );
+
+  z-index: -1;
+}
+
+.result-ribbon::before {
+  left: -18px;
+
+  transform:
+    translateY(-50%)
+    rotate(45deg);
+}
+
+.result-ribbon::after {
+  right: -18px;
+
+  transform:
+    translateY(-50%)
+    rotate(45deg);
+}
+
 .result-mascot {
   display: block;
-  width: 150px;
+  width: 175px;
   max-width: 46vw;
 
   margin:
