@@ -1516,6 +1516,26 @@ html {
   🧪 測試中獎畫面
 </button>
 
+<button
+  type="button"
+  onclick="previewNoPrizeResult()"
+  style="
+    display:block;
+    width:calc(100% - 32px);
+    max-width:420px;
+    margin:10px auto 20px;
+    padding:14px;
+    border:none;
+    border-radius:14px;
+    background:#8b6f47;
+    color:white;
+    font-size:16px;
+    font-weight:bold;
+  "
+>
+  🧪 測試銘謝惠顧畫面
+</button>
+
 </main>
 
 <footer class="site-footer">
@@ -2160,6 +2180,32 @@ function goMemberCenter() {
     'resultRemaining'
   ).innerText =
     '剩餘抽獎次數：1 次';
+
+
+  document.getElementById(
+    'resultOverlay'
+  ).style.display =
+    'flex';
+
+}
+
+function previewNoPrizeResult() {
+
+  document.getElementById(
+    'resultPrize'
+  ).innerText =
+    '銘謝惠顧';
+
+
+  document.getElementById(
+    'resultRemaining'
+  ).innerText =
+    '剩餘抽獎次數：1 次';
+
+
+  document.getElementById(
+    'resultOverlay'
+  ).classList.add('no-prize-mode');
 
 
   document.getElementById(
