@@ -293,6 +293,25 @@
     0 2px 4px rgba(90,0,0,.28);
 }
 
+.result-mascot {
+  display: block;
+  width: 150px;
+  max-width: 46vw;
+
+  margin:
+    -10px auto
+    -18px;
+
+  position: relative;
+  z-index: 2;
+
+  filter:
+    drop-shadow(
+      0 8px 12px
+      rgba(80, 40, 10, .18)
+    );
+}
+
 .result-congrats {
   margin-top: 10px;
 
@@ -1477,6 +1496,14 @@ html {
 
   <img
     src="/images/hululugame-mascot.png"
+    class="result-mascot"
+    alt="hululugame"
+  >
+
+  <div class="result-hero">
+
+  <img
+    src="/images/brand/hululugame-mascot.png"
     class="result-mascot"
     alt="hululugame"
   >
