@@ -149,32 +149,112 @@
       font-size: 14px;
     }
 
-    .result-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.72);
-      align-items: center;
-      justify-content: center;
-      padding: 25px;
-      z-index: 999;
-    }
+.result-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
 
-    .result-box {
-      background: white;
-      width: 100%;
-      max-width: 400px;
-      border-radius: 22px;
-      padding: 28px 20px;
-      text-align: center;
-    }
+  background:
+    rgba(40, 20, 12, .72);
 
-    .result-prize {
-      font-size: 30px;
-      font-weight: bold;
-      margin: 22px 0;
-    }
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  z-index: 999;
+}
+
+
+.result-box {
+  position: relative;
+
+  width: 100%;
+  max-width: 390px;
+
+  padding: 34px 22px 24px;
+
+  text-align: center;
+
+  border-radius: 28px;
+
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(255, 223, 120, .28),
+      transparent 32%
+    ),
+    linear-gradient(
+      180deg,
+      #fffaf0 0%,
+      #fff4dc 56%,
+      #fffaf5 100%
+    );
+
+  border:
+    1px solid rgba(212, 160, 40, .35);
+
+  box-shadow:
+    0 24px 70px rgba(60, 25, 10, .30),
+    inset 0 1px 0 rgba(255,255,255,.85);
+
+  overflow: hidden;
+}
+
+
+.result-box h2 {
+  margin: 8px 0 6px;
+
+  font-size: 27px;
+
+  color: #b42323;
+
+  font-weight: 900;
+
+  letter-spacing: .03em;
+}
+
+
+.result-prize {
+  margin: 20px 0 16px;
+
+  padding: 18px 14px;
+
+  font-size: 25px;
+
+  font-weight: 900;
+
+  line-height: 1.4;
+
+  color: #3b2919;
+
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #fffdf7 0%,
+      #fff6dd 100%
+    );
+
+  border:
+    1px solid rgba(218, 166, 54, .35);
+
+  box-shadow:
+    0 10px 24px rgba(154, 103, 20, .10);
+}
+
+
+#resultRemaining {
+  color: #7a6045;
+
+  font-size: 15px;
+
+  margin-bottom: 20px !important;
+}
     .loading {
       text-align: center;
       padding: 20px;
@@ -1916,6 +1996,27 @@ function goMemberCenter() {
     ).style.display = 'none';
 
   }
+  
+  function previewPrizeResult() {
+
+  document.getElementById(
+    'resultPrize'
+  ).innerText =
+    '🎁 消費滿1000$折 50$';
+
+
+  document.getElementById(
+    'resultRemaining'
+  ).innerText =
+    '剩餘抽獎次數：1 次';
+
+
+  document.getElementById(
+    'resultOverlay'
+  ).style.display =
+    'flex';
+
+}
 
 
   async function refreshAll() {
