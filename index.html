@@ -2137,12 +2137,64 @@ function goMemberCenter() {
 
   remainingDraws =
     result.remaining_draws;
+    
+    const isNoPrize =
+  result.prize_name === '銘謝惠顧';
 
+
+if (isNoPrize) {
+
+  document.getElementById(
+    'resultOverlay'
+  ).classList.add('no-prize-mode');
+
+  document.getElementById(
+    'resultRibbon'
+  ).innerText =
+    '🍀 今天差一點！';
+
+  document.getElementById(
+    'resultCongrats'
+  ).innerText =
+    'GOOD LUCK NEXT TIME';
+
+  document.getElementById(
+    'resultButton'
+  ).innerText =
+    '再接再厲';
+
+  document.getElementById(
+    'resultPrize'
+  ).innerText =
+    '銘謝惠顧';
+
+} else {
+
+  document.getElementById(
+    'resultOverlay'
+  ).classList.remove('no-prize-mode');
+
+  document.getElementById(
+    'resultRibbon'
+  ).innerText =
+    '✨ 恭喜你中獎了！✨';
+
+  document.getElementById(
+    'resultCongrats'
+  ).innerText =
+    'CONGRATULATIONS';
+
+  document.getElementById(
+    'resultButton'
+  ).innerText =
+    '收下獎品';
 
   document.getElementById(
     'resultPrize'
   ).innerText =
     '🎁 ' + result.prize_name;
+
+}
 
 
   document.getElementById(
