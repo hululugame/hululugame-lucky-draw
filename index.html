@@ -372,6 +372,59 @@
   letter-spacing: .28em;
 }
 
+/* ===== 銘謝惠顧專屬樣式 ===== */
+
+.no-prize-mode .result-ribbon {
+  background:
+    linear-gradient(
+      135deg,
+      #d9a441 0%,
+      #c58a2a 55%,
+      #9f6d20 100%
+    );
+
+  border-color:
+    rgba(255, 226, 150, .8);
+
+  color: #fffaf0;
+}
+
+.no-prize-mode .result-ribbon::before,
+.no-prize-mode .result-ribbon::after {
+  background:
+    linear-gradient(
+      135deg,
+      #a8731f 0%,
+      #825817 100%
+    );
+}
+
+.no-prize-mode .result-congrats {
+  color: #a67c35;
+}
+
+.no-prize-mode .result-prize {
+  color: #6b5638;
+
+  background:
+    linear-gradient(
+      180deg,
+      #fffdf8 0%,
+      #fff5df 100%
+    );
+}
+
+.no-prize-mode #resultButton {
+  background:
+    linear-gradient(
+      135deg,
+      #e3b04b 0%,
+      #c98b22 100%
+    ) !important;
+
+  color: #3c2a12 !important;
+}
+
     .loading {
       text-align: center;
       padding: 20px;
