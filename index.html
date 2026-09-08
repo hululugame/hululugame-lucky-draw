@@ -255,6 +255,55 @@
 
   margin-bottom: 20px !important;
 }
+/* ===== 中獎標題區 ===== */
+
+.result-hero {
+  margin-bottom: 18px;
+}
+
+.result-ribbon {
+  display: inline-block;
+
+  padding: 13px 24px;
+
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ef4444 0%,
+      #c81728 55%,
+      #a80f1d 100%
+    );
+
+  color: #fff5cf;
+
+  font-size: 24px;
+  font-weight: 900;
+
+  letter-spacing: .04em;
+
+  border: 2px solid rgba(255, 211, 94, .75);
+
+  box-shadow:
+    0 10px 22px rgba(150, 20, 30, .22),
+    inset 0 1px 0 rgba(255,255,255,.25);
+
+  text-shadow:
+    0 2px 4px rgba(90,0,0,.28);
+}
+
+.result-congrats {
+  margin-top: 10px;
+
+  color: #b8862f;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  letter-spacing: .28em;
+}
+
     .loading {
       text-align: center;
       padding: 20px;
@@ -1424,9 +1473,23 @@ html {
 <div id="resultOverlay" class="result-overlay">
   <div class="result-box">
 
-    <div style="font-size:50px;">🎉</div>
+  <div class="result-hero">
 
-    <h2>你的抽獎結果</h2>
+  <img
+    src="/images/hululugame-mascot.png"
+    class="result-mascot"
+    alt="hululugame"
+  >
+
+  <div class="result-ribbon">
+    ✨ 恭喜你中獎了！✨
+  </div>
+
+  <div class="result-congrats">
+    CONGRATULATIONS
+  </div>
+
+</div>
 
     <div id="resultPrize" class="result-prize"></div>
 
